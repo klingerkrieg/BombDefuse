@@ -39,8 +39,8 @@ int seqPontuada[qtdFios]  = {};
  */
 
 bool ativada = false;
-int min_ = 0;
-int seg_ = 35;
+int min_ = 9;
+int seg_ = 0;
 
 
 
@@ -143,16 +143,16 @@ void successBeep(){
 void errorBeep(){
     digitalWrite(RED,HIGH);
     //apita 3 vezes para indicar que errou o fio
-    tone(buzzerPIN, 100);
-    delay(100);
+    tone(buzzerPIN, 300);
+    delay(200);
     noTone(buzzerPIN);
     delay(100);
-    tone(buzzerPIN, 100);
-    delay(100);
+    tone(buzzerPIN, 300);
+    delay(200);
     noTone(buzzerPIN);
     delay(100);
-    tone(buzzerPIN, 100);
-    delay(100);
+    tone(buzzerPIN, 300);
+    delay(200);
     noTone(buzzerPIN);
     delay(1000);
     digitalWrite(RED,LOW);
@@ -172,9 +172,9 @@ void gerenciaFiosConectados(){
             break;
         }
     }
-    
+    lcd.setCursor(0,1);
+    lcd.print("      ");
     //Imprime os fios conectados
-    int posicaoLCD = 6;
     for (int i = 0; i < qtdFios; i++){
         //Verifica o fio que foi desconectado
         if (seqRealizada[i] == false && !digitalRead(sequenciaFios[i])){
@@ -193,7 +193,6 @@ void gerenciaFiosConectados(){
         }
 
         if (paginaAtual == -1){
-          lcd.setCursor(posicaoLCD+i,1);
           if (seqPontuada[i] == -1){
               lcd.print("*");
           } else
@@ -272,15 +271,6 @@ void beep(){
     } else
     if (beepStopMillis <= millis_){
         noTone(buzzerPIN);
-
-        /*if (min_ < 1 && beepStartMillis == 0){
-            digitalWrite(GREEN,HIGH);
-            beepStartMillis = millis() + 300;
-        } else
-        if (min_ < 5 && beepStartMillis == 0){
-            digitalWrite(GREEN,HIGH);
-            beepStartMillis = millis() + 500;
-        }*/
     }
 
     if (beepStartMillis1 > 0 && beepStartMillis1 <= millis()){
