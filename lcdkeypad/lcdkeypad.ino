@@ -2,13 +2,29 @@
 #include <Keypad.h>
 
 
+//Penalidade fio ou codigo errado
+int penalidadeMin = 1;
+
+/****
+ * Digitar códigos
+ */
+
+const int paginas = 3;
+String codigos[] = {"123","1234","12345"};
+String descricoes[] = {"Codigo 1","Codigo 2","Codigo 3"};
+bool codigosResolvidos[paginas];
+String codigoAtual = "";
+int paginaAtual = -1;
+
+
+/****
+ *  Retirada de Fios
+ */
 
 //Altere a sequencia para mudar a ordem de retirada dos fios
 //Os valores são as portas
 int  sequenciaFios[] = {52, 51, 50, 49};
 const int qtdFios = 4;
-//Penalidade fio errado
-int penalidadeMin = 3;
 
 //Eses vetor guardará a sequencia que foi realizada
 //Ele irá controlar quando o fio for desconectado
@@ -18,10 +34,20 @@ bool seqRealizada[qtdFios]  = {};
 //-1 errou, 0 nao fez, 1 acertou
 int seqPontuada[qtdFios]  = {};
 
+/****
+ * TEMPO
+ */
 
-//momento em que a bomba iniciou a contagem
-int startMillis = 0;
+bool ativada = false;
+int min_ = 0;
+int seg_ = 35;
 
+
+
+const int RED   = 31;
+const int GREEN = 33;
+unsigned long int lastLedMillis = 0;
+bool greenRed = false;
 
 
 
@@ -68,6 +94,9 @@ void setup() {
 
   Serial.begin(9600);
 
+  pinMode(GREEN,OUTPUT);
+  pinMode(RED,OUTPUT);
+
   //Inicia os vetores
   //Seta as portas como entrada
   for (int i = 0; i < qtdFios; i++){
@@ -75,7 +104,10 @@ void setup() {
     seqPontuada[i]  = 0;
     pinMode(sequenciaFios[i],INPUT);  
   }
-
+  //seta os codigos resolvidos para falso
+  for (int i = 0; i < paginas; i++){
+    codigosResolvidos[i] = false;
+  }
 
   //Progama o pino de backlight como saída
   pinMode(backLight, OUTPUT);
@@ -89,9 +121,43 @@ void setup() {
 }
 
 
-bool ativada = false;
-int min_ = 9;
-int seg_ = 0;
+void successBeep(){
+    digitalWrite(GREEN,HIGH);
+    //apita 3 vezes para indicar que errou o fio
+    tone(buzzerPIN, 1000);
+    delay(50);
+    noTone(buzzerPIN);
+    delay(50);
+    tone(buzzerPIN, 500);
+    delay(100);
+    noTone(buzzerPIN);
+    delay(50);
+    tone(buzzerPIN, 100);
+    delay(100);
+    noTone(buzzerPIN);
+    delay(1000);
+    digitalWrite(GREEN,LOW);
+}
+
+
+void errorBeep(){
+    digitalWrite(RED,HIGH);
+    //apita 3 vezes para indicar que errou o fio
+    tone(buzzerPIN, 100);
+    delay(100);
+    noTone(buzzerPIN);
+    delay(100);
+    tone(buzzerPIN, 100);
+    delay(100);
+    noTone(buzzerPIN);
+    delay(100);
+    tone(buzzerPIN, 100);
+    delay(100);
+    noTone(buzzerPIN);
+    delay(1000);
+    digitalWrite(RED,LOW);
+}
+
 
 /**
  * Imprime e gerencia no visor 1 traço para cada fio ainda conectado
@@ -117,26 +183,26 @@ void gerenciaFiosConectados(){
             if (proxFio != i){
                 //Se tiver sido o fio errado
                 min_ -= penalidadeMin;
-                //apita 3 vezes para indicar que errou o fio
-                /*beep(100,50);
-                beep(100,50);
-                beep(100,50);*/
+                errorBeep();
                 seqPontuada[i] = -1;
             } else {
+                successBeep();
                 //Se foi o fio certo
                 seqPontuada[i] = 1;
             }
         }
 
-        lcd.setCursor(posicaoLCD+i,1);
-        if (seqPontuada[i] == -1){
-            lcd.print("*");
-        } else
-        if (seqPontuada[i] == 0){
-            lcd.print("|");
-        } else
-        if (seqPontuada[i] == 1){
-            lcd.print(" ");
+        if (paginaAtual == -1){
+          lcd.setCursor(posicaoLCD+i,1);
+          if (seqPontuada[i] == -1){
+              lcd.print("*");
+          } else
+          if (seqPontuada[i] == 0){
+              lcd.print("|");
+          } else
+          if (seqPontuada[i] == 1){
+              lcd.print(" ");
+          }
         }
         
     }  
@@ -144,58 +210,54 @@ void gerenciaFiosConectados(){
 
 
 
-void gerenciaTeclado4x3(){
-  char key = keypad.getKey();
-  if (key){     // If key is pressed, send it to the Serial Monitor Window
-    Serial.println(key);
-  }  
-}
-
-
-
-/*
-
 //beep
-int beepStopMillis = 0;
+unsigned long int beepStopMillis = 0;
+unsigned long int beepStartMillis1 = 0;
+unsigned long int beepStartMillis2 = 0;
+unsigned long int beepStartMillis3 = 0;
 bool ligaBeep = true;
 int tempoBeep = 50;
+int freq = 100;
 //timer
-int lastMilliSecond = 0;
+unsigned long int lastMilliSecond = 0;
 
 //lastMilliSecond     1500
 //millis_             2000
-//actualSecond        2
 //beepStopMillis      1050
-//lastSecond          1
 
 void beep(){
-  int millis_ = millis();           
-  int actualSecond = millis_/1000;
-  int lastSecond = lastMilliSecond/1000;
-  
-  //A cada segundo entra nesse if
-  if (lastSecond != actualSecond){
-      tone(buzzerPIN, 100);
-      beepStopMillis = millis_ + 50;
-  } else
-  if (beepStopMillis <= millis_){
-      noTone(buzzerPIN);  
-  }
-}
+    unsigned long int millis_ = millis();
 
-
-void gerenciarTimer(){
-
-    int millis_ = millis();           
-    int actualSecond = millis_/1000;
-    int lastSecond = lastMilliSecond/1000;
+    
     
     //A cada segundo entra nesse if
-    if (lastSecond != actualSecond){
+    if (lastMilliSecond+1000 < millis_){
         lastMilliSecond = millis_;
+  
+        //beep
+        tone(buzzerPIN, freq);
+        beepStopMillis = millis_ + tempoBeep;        
 
+        if (min_ < 1 && seg_ < 30) {
+          tempoBeep = 75; 
+          beepStartMillis1 = millis_ + 250;
+          beepStartMillis2 = millis_ + 500;
+          beepStartMillis3 = millis_ + 750;
+        } else
+        if (min_ < 1) {
+          tempoBeep = 100;                  //0on 100off  350on 450off  700on 800off  
+          beepStartMillis1 = millis_ + 350;
+          beepStartMillis2 = millis_ + 700;
+        } else
+        if (min_ < 5) {
+          tempoBeep = 100;                  //0on  100off    500on 600off
+          beepStartMillis1 = millis_ + 500; 
+        }         
+        
+        
+  
         //Quando seg chegar em -1 volta para 59
-        seg_--;
+        seg_ -= 1;
         if( seg_ == -1){
             seg_ = 59;
             min_--;
@@ -207,77 +269,114 @@ void gerenciarTimer(){
             lcd.print("xxx");
             ativada = false;
         }  
+    } else
+    if (beepStopMillis <= millis_){
+        noTone(buzzerPIN);
+
+        /*if (min_ < 1 && beepStartMillis == 0){
+            digitalWrite(GREEN,HIGH);
+            beepStartMillis = millis() + 300;
+        } else
+        if (min_ < 5 && beepStartMillis == 0){
+            digitalWrite(GREEN,HIGH);
+            beepStartMillis = millis() + 500;
+        }*/
     }
-} */
 
-
-//beep
-int beepStopMillis = 0;
-bool ligaBeep = true;
-int tempoBeep = 50;
-//timer
-int lastMilliSecond = 0;
-
-//lastMilliSecond     1500
-//millis_             2000
-//actualSecond        2
-//beepStopMillis      1050
-//lastSecond          1
-
-//em bez de dividir por 1000, somar mais 1000
-
-void beep(){
-  int millis_ = millis();           
-  int actualSecond = millis_/1000;
-  int lastSecond = lastMilliSecond/1000;
+    if (beepStartMillis1 > 0 && beepStartMillis1 <= millis()){
+        tone(buzzerPIN, freq);
+        beepStopMillis = millis() + tempoBeep;
+        beepStartMillis1 = 0;
+    } else
+    if (beepStartMillis2 > 0 && beepStartMillis2 <= millis()){
+        tone(buzzerPIN, freq);
+        beepStopMillis = millis() + tempoBeep;
+        beepStartMillis2 = 0;
+    } else
+    if (beepStartMillis3 > 0 && beepStartMillis3 <= millis()){
+        tone(buzzerPIN, freq);
+        beepStopMillis = millis() + tempoBeep;
+        beepStartMillis3 = 0;
+    }
+    
   
-  //A cada segundo entra nesse if
-  if (lastSecond != actualSecond){
-      lastMilliSecond = millis_;
+}
 
-      //beep
-      tone(buzzerPIN, 100);
-      beepStopMillis = millis_ + 50;
+
+
+void gerenciaCodigosTeclado4x3(){
+
+    if (paginaAtual > -1){
+        //Escreve
+        lcd.setCursor(0,1);
+        lcd.print(descricoes[paginaAtual]);
+        lcd.print(":");
+
+        char key = keypad.getKey();
+        if (key){
+
+            if (key == '*'){
+                //insere
+                if (codigos[paginaAtual] == codigoAtual){
+                    successBeep();
+                    codigosResolvidos[paginaAtual] = true;
+                    paginaAtual = -1;
+                } else {
+                    min_ -= penalidadeMin;
+                    errorBeep();
+                }
+                codigoAtual = "";
+            } else
+            if (key == '#'){
+                codigoAtual = "";
+            } else {
+                codigoAtual = String(codigoAtual + key);
+            }
+        }
+
+        lcd.print(codigoAtual);
+        lcd.print("                ");
       
-
-      //Quando seg chegar em -1 volta para 59
-      seg_--;
-      if( seg_ == -1){
-          seg_ = 59;
-          min_--;
-      }
+    }
   
-      // Quando _min for menor que 0 a bomba explode
-      if( min_ < 0){
-          lcd.setCursor(0,1);
-          lcd.print("xxx");
-          ativada = false;
-      }  
-  } else
-  if (beepStopMillis <= millis_){
-      noTone(buzzerPIN);  
-  }
+}
+
+
+bool verificaObjetivos(){
+    bool desarmada = true;
+    for (int i = 0; i < qtdFios; i++){
+        if (seqRealizada[i] == false){
+            desarmada = false;
+            break;  
+        }
+    }
+    //seta os codigos resolvidos para falso
+    for (int i = 0; i < paginas; i++){
+        if (codigosResolvidos[i] == false){
+            desarmada = false;
+            break;  
+        }
+    }
+    return desarmada;
 }
 
 
  
 // Laço principal
 void loop() {
-
-    
-  int beepOn = 0;
-  int beepOff = 0;
+  int ledMillis = 0;
 
   //Quando ativada começará a contar
   if (ativada){
 
+      
       //registro o tempo onde a bomba realmente começou a contar
-      if (startMillis == 0){
-          startMillis = millis();  
+      if (lastMilliSecond == 0){
+          lastMilliSecond = millis();  
       }
   
       gerenciaFiosConectados();
-      //gerenciaTeclado4x3();
+      gerenciaCodigosTeclado4x3();
       
       lcd.setCursor(0,0);
   
@@ -291,53 +390,24 @@ void loop() {
         lcd.print("0");
       }
       lcd.print(seg_);
-      
-      
-      beep();
-      //gerenciarTimer();
-      
 
-      /*if (ligaBeep){
-          tone(buzzerPIN, 10);
-          if (toneStartedMillis == 0)
-              toneStartedMillis = millis();
-          if (toneStartedMillis+tempoBeep > millis()+startMillis){
-              ligaBeep = false;
-              noTone(buzzerPIN);
-          }
-      }*/
-  
-      
-      //Enquanto estiver acima de 5 min, 1 bip por segundo
-      /*if (min_ >= 5) {
-        beepOn = 50;
-        beepOff = 950;
-        beep(beepOn, beepOff);
-      } else 
-      if (min_ >= 1 ){//Quando acima de 3 min 2 bip por segundo
-        beepOn = 50;
-        beepOff = 450;
-        beep(beepOn, beepOff);
-        beep(beepOn, beepOff);
-      } else { // Abaixo de 1 min 3 bips por segundo
-        beepOn = 50;
-        beepOff = 240;
-        beep(beepOn, beepOff);
-        beep(beepOn, beepOff);
-        beep(beepOn, beepOff);
-      }*/
-  
-  
+
+      if (verificaObjetivos()){
+          ativada = false;
+          //desarmou a bomba
+          lcd.setCursor(0,1);
+          lcd.print("DESARMADA       ");
+      } else {
+          beep();
+      }
       
   }
 
 
-  
+  /***        Lê as teclas do shield ***/
   static int teclaAnt = -1;   // última tecla detectada
- 
   // Lê a tensão no pino A0
   int leitura = analogRead(A0);
-
   // Identifica a tecla apertada pela tensão lida
   int teclaNova;
   for (teclaNova = 0; ; teclaNova++) {
@@ -346,16 +416,65 @@ void loop() {
     }
   }
 
-  //starta a bomba quando apertar o select
-  if (teclaNova == 4){
-    ativada = true;  
-  }
- 
-  // Atualiza a tela se pressionou uma nova tecla
-  if (teclaNova != teclaAnt) {
-    lcd.setCursor(0,1);
-    lcd.print(teclas[teclaNova].nome);
-    teclaAnt = teclaNova;
+
+
+
+  if (ativada == false){
+
+    if (lastLedMillis + 1000 < millis()){
+        lastLedMillis = millis();
+        greenRed = !greenRed;
+        if (greenRed){
+            digitalWrite(RED,LOW); 
+            digitalWrite(GREEN,HIGH); 
+        } else {
+            digitalWrite(RED,HIGH); 
+            digitalWrite(GREEN,LOW);
+        }
+    }
+
+    
+    if (teclaNova == 4){
+      ativada = true;
+      digitalWrite(GREEN,LOW);
+      digitalWrite(RED,LOW);
+    }
+  } else {
+
+      //nao deixa botao ser pressionado mais de uma vez
+      if (teclaNova != teclaAnt){
+
+          //tecla pra cima
+          if (teclaNova == 1){
+              paginaAtual++;
+
+              while (paginaAtual > -1 and codigosResolvidos[paginaAtual] == true) {
+                  paginaAtual++;
+                  if (paginaAtual >= paginas){
+                      paginaAtual = -1;
+                      break;
+                  }
+              }
+          } else
+          if (teclaNova == 2){
+          //para baixo
+              paginaAtual--;
+
+              while (paginaAtual > -1 and codigosResolvidos[paginaAtual] == true) {
+                  paginaAtual--;
+                  if (paginaAtual < -1){
+                      paginaAtual = paginas-1;
+                      break;
+                  }
+              }
+              
+          }
+      }
+      // Atualiza a tela se pressionou uma nova tecla
+      if (teclaNova != teclaAnt) {
+          teclaAnt = teclaNova;
+      }
+
   }
  
 }
