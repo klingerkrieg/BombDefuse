@@ -37,7 +37,7 @@ have_plugrow_lower = 1; // [ 1:true, 0:false ]
 mil2mm = 0.0254;
 
 batt = [17.0, 53.0, 26.0]; // 
-pcb = [80.1, 102, 1.45]; // lcd/keypad shield, net (dwg is 80x58 mm)
+pcb = [80.1, 80.9, 1.45]; // lcd/keypad shield, net (dwg is 80x58 mm)
 pcb1 = 57.9;
 pcb0 = 80.1;
 pcb2floor = 17.0;
@@ -249,7 +249,7 @@ module bottom() {
         if (extra_room > 0) 
             translate([pcb[0]/2+tol+wall+extra_room/2-1.5, 0, wall]) {
             translate([0, pcb[1]/2 - 7.0/2, pcb2floor*.8]) rotate([0, -90, 0]) cylinder(r=7.0/2, h=extra_room); // hole in internal wall
-            for (dx = [-5.0, 5.0]) translate([dx, pcb[1]/2 - 6.0/2, pcb2floor*.5]) rotate([0, -90, -90]) cylinder(r=6.0/2, h=extra_room, $fn=24); // holes in external wall
+            //for (dx = [-5.0, 5.0]) translate([dx, pcb[1]/2 - 6.0/2, pcb2floor*.5]) rotate([0, -90, -90]) cylinder(r=6.0/2, h=extra_room, $fn=24); // holes in external wall
             difference () {
                 c_cube(extra_room, pcb[1]+2*tol, batt[2]+2*tol);
                 /*for (dy = [0, 20]) translate([0, dy, 0]) rotate([45, 0, 0]) {
@@ -312,12 +312,6 @@ module top() {
            translate([xy[0], xy[1], wall+swtol+frmheight]) 
 			cr_cube(47/2+tol, 58/2+tol, pcb2roof-frmheight, 1.0);
        }
-       module keyboard_hole_without_divide(xy) {  
-           frmheight = 3.0;
-           translate([xy[0], xy[1], wall+swtol+frmheight]) 
-            //47cmx58cm = 48x59
-            cr_cube(48, 59, pcb2roof-frmheight, 1.0);
-        }
 		module button_room(dx, dy) {
           // room required for button collar
 			translate(button) translate([dx, dy, -10]) 
@@ -335,12 +329,12 @@ module top() {
        module lateral_plugrow_hole(xy, larg, alt) {
 			translate([xy[0], xy[1], 1]) 
                 //largura, prof, altura
-				c_cube(larg, wall+10, alt);
+				c_cube(larg, wall*5, alt);
        }
        module lateral2_plugrow_hole(xy, larg, alt) {
 			translate([xy[0], xy[1], 1]) 
                 //largura, prof, altura
-				c_cube(wall+10, larg, 5);
+				c_cube(wall*10, larg, 5);
        }
 		// room for bottom case within frame 
 		hull () for (x = [-1, 1]) for (y = [-1, 1])
@@ -401,12 +395,11 @@ module top() {
         buzzer_hole(70, 0, true);
         
         //keyboard 4x3 hole
-        //keyboard_hole([80, 10]);
-        keyboard_hole_without_divide([90,0]);
+        keyboard_hole([80, 10]);
         
         //lateral plug rows
-        lateral_plugrow_hole([80,-(pcb[1]/2)], 24, 5);
-        lateral2_plugrow_hole([pcb[0]/2+extra_room, -15], 10, 5);
+        lateral_plugrow_hole([70,-42], 24, 5);
+        lateral2_plugrow_hole([105, -15], 24, 5);
         
         
 		// plug rows
@@ -464,14 +457,11 @@ module top() {
 module teste() {
 	
 	module add() { ///a curvatura do top é aqui
-		hull () for (x = [-1, 1.1]) for (y = [-0.8, 2.1]) {
-			translate([x*20, y*20, -2]) 
+		hull () for (x = [-1, 1]) for (y = [-0.8, 1.2]) {
+			translate([x*20, y*20, -1]) 
 			//cylinder(r = corner_r+tol+wall, h = d, $fs=0.3); // include frame
-			//translate([x*20, y*20, pcb2roof+wall]); 
-			//sphere(r = 2, $fs=0.3);	
-            translate([-25, -20, 9]) 
-            cube([45,65,5]);
-            
+			translate([x*20, y*20, pcb2roof+wall]) 
+			sphere(r = 1, $fs=0.3);	
 		}
 	}
        
@@ -487,8 +477,7 @@ module teste() {
         module keyboard_hole_without_divide(xy) {  
            frmheight = 3.0;
            translate([xy[0], xy[1], wall+swtol+frmheight]) 
-            //47cmx58cm = 48x59
-            cr_cube(48, 59, pcb2roof-frmheight, 1.0);
+            cr_cube(47, 58, pcb2roof-frmheight, 1.0);
         }
         
         module led_hole(dx, dy, en) {  
@@ -504,17 +493,9 @@ module teste() {
                 cylinder(r = button_dia/2 + swtol, h=pcb2roof+wall+(en ? d : -breakaway), $fn=32);
        }
        
-        // lcd window original
+        // lcd window
 		translate([0, 40, 0])
 			c_cube(window[0], window[1], pcb2roof+tol+wall+d);
-       
-       
-       // less lcd frame 
-        translate([0, 65, 0]) 
-            c_cube(lcdframe[0]+2*wall+2*tol, lcdframe[1]+2*wall+2*tol, 40);
-       // lcd window meu
-		//translate([0, 60, 0])
-		//	c_cube(window[0], window[1], pcb2roof+tol+wall+d);
 		
         //keyboard 4x3 hole
         keyboard_hole([-25, -10]);
@@ -582,7 +563,7 @@ if (part == "buttons") { // with bar that connects
 	}
 }
 if (part=="teste") translate([-0, 35, pcb2roof+tol+wall]) rotate([180,0,0]) teste();
-if (part=="bottom" || part=="all") translate([0, -85, 0]) bottom();
+if (part=="bottom" || part=="all") translate([0, -65, 0]) bottom();
 if (part=="top" || part=="all") translate([-0, 35, pcb2roof+tol+wall]) rotate([180,0,0]) top();
 
     

@@ -5,17 +5,45 @@
 //Penalidade fio ou codigo errado
 int penalidadeMin = 1;
 
+
+
+//CÓDIGOS
+// VERSAO 1
+String codigosV1[] = {"111","1111","11111"};
+String descricoesV1[] = {"Codigo 1","Codigo 2","Codigo 3"};
+int  sequenciaFiosV1[] = {52, 51, 50, 49};
+int fiosErradosV1[] = {53, 48, 49, 47};
+
+// VERSAO 2
+String codigosV2[] = {"222","2222","22222"};
+String descricoesV2[] = {"Codigo 1","Codigo 2","Codigo 3"};
+int  sequenciaFiosV2[] = {52, 51, 50, 49};
+int fiosErradosV2[] = {49, 50, 51, 52};
+
+// VERSAO 3
+String codigosV3[] = {"333","3333","33333"};
+String descricoesV3[] = {"Codigo 1","Codigo 2","Codigo 3"};
+int  sequenciaFiosV3[] = {52, 51, 49, 50};
+int fiosErradosV3[] = {53, 48, 49, 47};
+
+
+/***
+ * Versao da bomba
+ */
+int versaoEscolhida = 0;
+int qtdVersoes = 3;
+
+
 /****
  * Digitar códigos
  */
 
 const int paginas = 3;
-String codigos[] = {"123","1234","12345"};
+String codigos[] = {"","",""};
 String descricoes[] = {"Codigo 1","Codigo 2","Codigo 3"};
 bool codigosResolvidos[paginas];
 String codigoAtual = "";
 int paginaAtual = -1;
-
 
 /****
  *  Retirada de Fios
@@ -25,6 +53,8 @@ int paginaAtual = -1;
 //Os valores são as portas
 int  sequenciaFios[] = {52, 51, 50, 49};
 const int qtdFios = 4;
+int fiosErrados[] = {53, 48, 49, 47};
+const int qtdFiosErrados = 4;
 
 //Eses vetor guardará a sequencia que foi realizada
 //Ele irá controlar quando o fio for desconectado
@@ -33,6 +63,8 @@ bool seqRealizada[qtdFios]  = {};
 //Esse vetor irá controlar se errou ou acertou ou ainda nao realizou a sequencia
 //-1 errou, 0 nao fez, 1 acertou
 int seqPontuada[qtdFios]  = {};
+// seq realizada
+bool seqFiosErradosRealizados[qtdFiosErrados]  = {};
 
 /****
  * TEMPO
@@ -102,6 +134,10 @@ void setup() {
   for (int i = 0; i < qtdFios; i++){
     seqRealizada[i] = false;
     seqPontuada[i]  = 0;
+    pinMode(fiosErrados[i],INPUT);  
+  }
+  for (int i = 0; i < qtdFiosErrados; i++){
+    seqFiosErradosRealizados[i] = false;
     pinMode(sequenciaFios[i],INPUT);  
   }
   //seta os codigos resolvidos para falso
@@ -173,7 +209,26 @@ void gerenciaFiosConectados(){
         }
     }
     lcd.setCursor(0,1);
-    lcd.print("      ");
+    lcd.print(" ");
+    //Verifica os fios que nao devem ser desconectados
+    for (int i = 0; i < qtdFiosErrados; i++){
+        //Verifica o fio que foi desconectado
+        if (seqFiosErradosRealizados[i] == false && !digitalRead(fiosErrados[i])){
+            seqFiosErradosRealizados[i] = true;
+            min_ -= penalidadeMin;
+            errorBeep();
+        }
+        if (paginaAtual == -1){
+          if (seqFiosErradosRealizados[i] == true){
+              lcd.print("*");
+          } else
+          if (seqFiosErradosRealizados[i] == false){
+              lcd.print("|");
+          }
+        }
+    }
+
+    
     //Imprime os fios conectados
     for (int i = 0; i < qtdFios; i++){
         //Verifica o fio que foi desconectado
@@ -264,6 +319,8 @@ void beep(){
     
         // Quando _min for menor que 0 a bomba explode
         if( min_ < 0){
+            lcd.setCursor(0,0);
+            lcd.print("00:00");
             lcd.setCursor(0,1);
             lcd.print("xxx");
             ativada = false;
@@ -423,8 +480,51 @@ void loop() {
         }
     }
 
+
+    //nao deixa botao ser pressionado mais de uma vez
+      if (teclaNova != teclaAnt){
+          //tecla pra cima
+          if (teclaNova == 1){
+              versaoEscolhida++;
+              if (versaoEscolhida == qtdVersoes){
+                  versaoEscolhida = 0;
+              }
+          } else
+          if (teclaNova == 2){
+              //para baixo
+              versaoEscolhida--;
+              if (versaoEscolhida < 0){
+                  versaoEscolhida = qtdVersoes-1;
+              }
+          }
+          //Imprime a versao escolhida
+          lcd.setCursor(0,1);
+          lcd.print("v");
+          lcd.print(versaoEscolhida);
+      }
+
     
     if (teclaNova == 4){
+
+      //seta as configuracoes da versao escolhida
+      if (versaoEscolhida == 0){
+          memcpy(codigos, codigosV1, sizeof(codigosV1[0])*paginas);
+          memcpy(descricoes, descricoesV1, sizeof(descricoesV1[0])*qtdFios);
+          memcpy(sequenciaFios, sequenciaFiosV1, sizeof(sequenciaFiosV1[0])*qtdFios);
+          memcpy(fiosErrados, fiosErradosV1, sizeof(fiosErradosV1[0])*qtdFiosErrados);
+      } else
+      if (versaoEscolhida == 1){
+          memcpy(codigos, codigosV2, sizeof(codigosV2[0])*paginas);
+          memcpy(descricoes, descricoesV2, sizeof(descricoesV2[0])*qtdFios);
+          memcpy(sequenciaFios, sequenciaFiosV2, sizeof(sequenciaFiosV2[0])*qtdFios);
+          memcpy(fiosErrados, fiosErradosV2, sizeof(fiosErradosV2[0])*qtdFiosErrados);
+      } else {
+          memcpy(codigos, codigosV3, sizeof(codigosV3[0])*paginas);
+          memcpy(descricoes, descricoesV3, sizeof(descricoesV3[0])*qtdFios);
+          memcpy(sequenciaFios, sequenciaFiosV3, sizeof(sequenciaFiosV3[0])*qtdFios);
+          memcpy(fiosErrados, fiosErradosV3, sizeof(fiosErradosV3[0])*qtdFiosErrados);
+      }
+      
       ativada = true;
       digitalWrite(GREEN,LOW);
       digitalWrite(RED,LOW);
@@ -433,7 +533,6 @@ void loop() {
 
       //nao deixa botao ser pressionado mais de uma vez
       if (teclaNova != teclaAnt){
-
           //tecla pra cima
           if (teclaNova == 1){
               paginaAtual++;
@@ -457,7 +556,6 @@ void loop() {
                       break;
                   }
               }
-              
           }
       }
       // Atualiza a tela se pressionou uma nova tecla

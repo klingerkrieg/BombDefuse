@@ -8,7 +8,7 @@
             "button_dy2": "-2",
             "buzzer_dia": "12",
             "d": "0.01",
-            "extra_room": "80",
+            "extra_room": "60",
             "frame_w": "2.5",
             "have_down_key": "1",
             "have_left_key": "1",
