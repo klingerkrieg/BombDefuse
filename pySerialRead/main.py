@@ -12,9 +12,17 @@ if (len(sys.argv) == 3):
     bauds = sys.argv[2]
 
 porta = sys.argv[1]
-
-while True:
-   with serial.Serial(porta, bauds, timeout=1) as ser:
+print("Connecting:", porta, " ", bauds)
+ser = serial.Serial(porta.strip(), bauds, timeout=1)
+try:
+    while True:
         line = ser.readline()
-        if line.strip() == "1":
+        text = line.decode()
+        print(text)
+        if text.strip() == "boom":
+            print("******PLAY SOUND*******")
             playsound('explode.mp3')
+            break
+except:
+    print("******POWER OFF*******")
+    playsound('explode.mp3')
