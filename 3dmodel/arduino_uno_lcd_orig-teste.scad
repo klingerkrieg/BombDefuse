@@ -189,7 +189,9 @@ module bottom() {
     }
 	module add() {
 		hull () for (x = [-1, 1]) for (y = [-1, 1])
-			translate([x*(pcb[0]/2+tol+wall-corner_r) + (x>0 ? extra_y : 0), y*(pcb[1]/2+tol+wall-corner_r), corner_r]) {
+			translate([x*(pcb[0]/2+tol+wall-corner_r) + (x>0 ? extra_y : 0), 
+                        y*(pcb[1]/2+tol+wall-corner_r), 
+                        corner_r]) {
 				sphere(r = corner_r, $fs=0.3);
 				cylinder(r = corner_r, h = wall+pcb2floor+pcb[2]-corner_r, $fs=0.3);
 		}
@@ -214,8 +216,8 @@ module bottom() {
         }
 		difference () {
 			// pcb itself
-			translate([-(pcb[0]/2+tol), -(pcb[1]/2+tol), wall])
-				cube([2*tol+pcb[0], 2*tol+pcb[1], pcb2floor+pcb[2]+d]);
+			translate([-(pcb[0]/2+tol)+2, -(pcb[1]/2+tol)+2, wall+2])
+				cube([2*tol+pcb[0], 2*tol+pcb[1]-4, pcb2floor+pcb[2]+d]);
 			// less pcb mount pedestals to lcd shield pcb]) 
             difference ( ){
                 pedestal(lcdpcbdx-pcbmntdx, lcdpcbdy-pcbmntdy, pcb2floor, pcbmntdia);   
@@ -247,11 +249,11 @@ module bottom() {
         tswitch(tol);
         // extra room
         if (extra_room > 0) 
-            translate([pcb[0]/2+tol+wall+extra_room/2-1.5, 0, wall]) {
-            translate([0, pcb[1]/2 - 7.0/2, pcb2floor*.8]) rotate([0, -90, 0]) cylinder(r=7.0/2, h=extra_room); // hole in internal wall
+            translate([pcb[0]/2+tol+wall+extra_room/2-1.5, 0, wall+2]) {
+            //translate([0, pcb[1]/2 - 7.0/2, pcb2floor*.8]) rotate([0, -90, 0]) cylinder(r=7.0/2, h=extra_room); // hole in internal wall
             for (dx = [-5.0, 5.0]) translate([dx, pcb[1]/2 - 6.0/2, pcb2floor*.5]) rotate([0, -90, -90]) cylinder(r=6.0/2, h=extra_room, $fn=24); // holes in external wall
             difference () {
-                c_cube(extra_room, pcb[1]+2*tol, batt[2]+2*tol);
+                c_cube(extra_room, pcb[1]+2*tol-4, batt[2]+2*tol);
                 /*for (dy = [0, 20]) translate([0, dy, 0]) rotate([45, 0, 0]) {
                     for (dx = [(extra_room/2-wall/2), -(extra_room/2-wall/2)]) { 
                         translate([dx, 0, 0]) c_cube(wall, wall, 30);
