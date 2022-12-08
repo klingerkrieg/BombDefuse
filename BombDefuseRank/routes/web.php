@@ -13,12 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [App\Http\Controllers\WelcomeController::class, 'index'])->name('home');
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/new', [App\Http\Controllers\HomeController::class, 'new'])->name('new');
+Route::post('/save', [App\Http\Controllers\HomeController::class, 'save'])->name('save');
+Route::post('/update/{team}', [App\Http\Controllers\HomeController::class, 'update'])->name('update');
+Route::get('/edit/{team}', [App\Http\Controllers\HomeController::class, 'edit'])->name('edit');

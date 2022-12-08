@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Member extends Model
 {
     use HasFactory;
+
+    protected $fillable = ["name", "age", "course", "team_id"];
+
+    public function team(){
+        return $this->belongsTo(Team::class);
+    }
+    
 }

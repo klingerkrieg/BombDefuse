@@ -5,7 +5,10 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
+                <div class="card-header">
+                    <h1 class="float-start">{{ __('BombDefuse RANK') }}</h1>
+                    <a href="{{route('new')}}" class="btn btn-primary float-end">Nova equipe</a>
+                </div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -14,9 +17,14 @@
                         </div>
                     @endif
 
-                    <a href="{{route('new')}}">Nova equipe</a>
+                    <ol>
+                    @foreach ($teams as $team)
+                        <li><a href="{{route('edit',$team)}}">{{$team->time}} {{$team->team_name}}</a></li>
+                    @endforeach
+                    </ol>
 
-                    {{ __('You are logged in!') }}
+                    
+
                 </div>
             </div>
         </div>

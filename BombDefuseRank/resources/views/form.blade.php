@@ -9,16 +9,21 @@
 
                 <div class="card-body">
 
-                    <form action="" method="post">
-                        @csrf
+                    @if ($team->id)
+                        <form id="form" action="{{route('update',$team)}}" method="post">
+                            @csrf
+                    @else
+                        <form id="form" action="{{route('save')}}" method="post">
+                            @csrf
+                    @endif
 
                         <div class='row'>
                             <label class='col-md'>Nome da equipe
-                                <input name="team_name" class="form-control" type="text" value="">
+                                <input name="team_name" class="form-control" type="text" value="{{$team->team_name}}">
                             </label>
 
                             <label class='col-md-4'>Tempo restante
-                                <input name="time" class="form-control" type="text" value="">
+                                <input name="time" class="form-control" type="text" value="{{$team->time}}">
                             </label>
                         </div>
 
@@ -28,15 +33,15 @@
                             <div class='row'>
 
                                 <label class='col-md-6'> Nome
-                                    <input name="time[{{$i}}]" class="form-control" type="text" value="">
+                                    <input name="name[{{$i}}]" class="form-control" type="text" value="{{$members[$i]->name ?? null}}">
                                 </label>
 
                                 <label class='col-md-2'> Idade
-                                    <input name="age[{{$i}}]" class="form-control" type="text" value="">
+                                    <input name="age[{{$i}}]" class="form-control" type="text" value="{{$members[$i]->age ?? null}}">
                                 </label>
 
                                 <label class='col-md-4'> Curso
-                                    <input name="course[{{$i}}]" class="form-control" type="text" value="">
+                                    <input name="course[{{$i}}]" class="form-control" type="text" value="{{$members[$i]->course ?? null}}">
                                 </label>
 
                                 {{--<label class='col-md-2'> Período
@@ -53,7 +58,7 @@
                     </form>
 
                     <div class="row gap-3 mt-3 d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary col-md-3">Salvar</button>
+                        <button type="submit" class="btn btn-primary col-md-3" form="form">Salvar</button>
                         <a href="{{route("new")}}" class="btn btn-secondary col-md-3">Novo</a>
                         <a href="{{route("home")}}" class="btn btn-secondary col-md-3">Rank</a>
                     </div>

@@ -18,6 +18,7 @@ class CreateMembersTable extends Migration
             $table->string('name');
             $table->string('age');
             $table->string('course');
+            $table->foreignId("team_id")->constrained();
             $table->timestamps();
         });
     }

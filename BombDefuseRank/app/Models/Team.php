@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Team extends Model
 {
     use HasFactory;
+
+    protected $fillable = ["team_name", "time"];
+
+    public function members(){
+        return $this->hasMany(Member::class);
+    }
+
+    
 }
