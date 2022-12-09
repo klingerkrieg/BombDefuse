@@ -2,10 +2,26 @@
 #include <Keypad.h>
 
 
+//TEMPO
+const int MIN_ = 6;
+const int SEG_ = 0;
+
 //Penalidade fio ou codigo errado
 int penalidadeMin = 1;
 
+//fios
+const int fazul     = 53;
+const int fverde    = 51;
+const int famarelo  = 49;
+const int flaranja  = 47;
+const int fvermelho = 43;
+const int froxo     = 52;
+const int fcinza    = 50;
+const int fbranco   = 48;
+const int fpreto    = 46;
+const int fmarrom   = 44;
 
+const int resetPIN  = 21;
 
 //CÓDIGOS
 // VERSAO 1
@@ -71,13 +87,13 @@ bool seqFiosErradosRealizados[qtdFiosErrados]  = {};
  */
 
 bool ativada = false;
-int min_ = 9;
-int seg_ = 0;
+int min_ = MIN_;
+int seg_ = SEG_;
 
 
 
-const int RED   = 31;
-const int GREEN = 33;
+const int RED   = 37;
+const int GREEN = 35;
 unsigned long int lastLedMillis = 0;
 bool greenRed = false;
 
@@ -128,6 +144,10 @@ void setup() {
 
   pinMode(GREEN,OUTPUT);
   pinMode(RED,OUTPUT);
+
+  digitalWrite(resetPIN, HIGH);
+  pinMode(resetPIN,OUTPUT);
+  
 
   //Inicia os vetores
   //Seta as portas como entrada
@@ -271,7 +291,7 @@ unsigned long int beepStartMillis2 = 0;
 unsigned long int beepStartMillis3 = 0;
 bool ligaBeep = true;
 int tempoBeep = 50;
-int freq = 100;
+int freq = 1000;
 //timer
 unsigned long int lastMilliSecond = 0;
 
@@ -319,11 +339,18 @@ void beep(){
     
         // Quando _min for menor que 0 a bomba explode
         if( min_ < 0){
+            lcd.clear();
             lcd.setCursor(0,0);
             lcd.print("00:00");
             lcd.setCursor(0,1);
-            lcd.print("xxx");
+            lcd.print("bye bye!");
+            delay(5000);
             ativada = false;
+            noTone(buzzerPIN);
+            lcd.clear();
+            lcd.print("Reiniciando...");
+            delay(1000);
+            digitalWrite(resetPIN,LOW);            
         }  
     } else
     if (beepStopMillis <= millis_){
@@ -361,6 +388,11 @@ void gerenciaCodigosTeclado4x3(){
 
         char key = keypad.getKey();
         if (key){
+
+            //som ao digitar tecla
+            tone(buzzerPIN,1000);
+            delay(50);
+            noTone(buzzerPIN);
 
             if (key == '*'){
                 //insere
@@ -411,6 +443,30 @@ bool verificaObjetivos(){
  
 // Laço principal
 void loop() {
+
+  /*Serial.println("------------");
+  Serial.print("ativada");
+  Serial.println(ativada);
+  Serial.print("min_");
+  Serial.println(min_);
+  Serial.print("seg_");
+  Serial.println(seg_);
+  Serial.print("beepStopMillis");
+  Serial.println(beepStopMillis);
+  Serial.print("beepStartMillis1");
+  Serial.println(beepStartMillis1);
+  Serial.print("beepStartMillis2");
+  Serial.println(beepStartMillis2);
+  Serial.print("beepStartMillis3");
+  Serial.println(beepStartMillis3);
+  Serial.print("ligaBeep");
+  Serial.println(ligaBeep);
+  Serial.print("paginaAtual");
+  Serial.println(paginaAtual);*/
+  
+
+
+  
   int ledMillis = 0;
 
   //Quando ativada começará a contar
@@ -482,7 +538,7 @@ void loop() {
 
 
     //nao deixa botao ser pressionado mais de uma vez
-      if (teclaNova != teclaAnt){
+    if (teclaNova != teclaAnt){
           //tecla pra cima
           if (teclaNova == 1){
               versaoEscolhida++;
@@ -499,9 +555,17 @@ void loop() {
           }
           //Imprime a versao escolhida
           lcd.setCursor(0,1);
-          lcd.print("v");
+          lcd.print(" v");
           lcd.print(versaoEscolhida);
-      }
+          
+          tone(buzzerPIN,1000);
+          delay(50);
+          noTone(buzzerPIN);
+    }
+    // Atualiza a tela se pressionou uma nova tecla
+    if (teclaNova != teclaAnt) {
+        teclaAnt = teclaNova;
+    }
 
     
     if (teclaNova == 4){
@@ -533,6 +597,9 @@ void loop() {
 
       //nao deixa botao ser pressionado mais de uma vez
       if (teclaNova != teclaAnt){
+          tone(buzzerPIN,1000);
+          delay(50);
+          noTone(buzzerPIN);
           //tecla pra cima
           if (teclaNova == 1){
               paginaAtual++;
