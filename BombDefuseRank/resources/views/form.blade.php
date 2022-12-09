@@ -23,7 +23,7 @@
                             </label>
 
                             <label class='col-md-4'>Tempo restante
-                                <input name="time" class="form-control" type="text" value="{{$team->time}}">
+                                <input name="time" class="form-control" type="time" max="18:00" min="00:00" value="{{$team->time}}">
                             </label>
                         </div>
 
@@ -58,9 +58,13 @@
                     </form>
 
                     <div class="row gap-3 mt-3 d-flex justify-content-center">
-                        <button type="submit" class="btn btn-primary col-md-3" form="form">Salvar</button>
-                        <a href="{{route("new")}}" class="btn btn-secondary col-md-3">Novo</a>
-                        <a href="{{route("home")}}" class="btn btn-secondary col-md-3">Rank</a>
+                        <button type="submit" class="btn btn-primary col-md-2" form="form">Salvar</button>
+                        <a href="{{route("new")}}" class="btn btn-secondary col-md-2">Novo</a>
+                        <a href="{{route("home")}}" class="btn btn-secondary col-md-2">Rank</a>
+                        <a href="{{route("foto",$team)}}" class="btn btn-success col-md-2">Foto</a>
+                        @if ($canDelete)
+                            <a href="{{route("delete",$team)}}" class="btn btn-danger col-md-2">Deletar</a>                            
+                        @endif
                     </div>
 
 

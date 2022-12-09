@@ -17,9 +17,12 @@ Route::get('/', [App\Http\Controllers\WelcomeController::class, 'index'])->name(
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
 
 Route::get('/new', [App\Http\Controllers\HomeController::class, 'new'])->name('new');
 Route::post('/save', [App\Http\Controllers\HomeController::class, 'save'])->name('save');
+Route::get('/foto/{team}', [App\Http\Controllers\HomeController::class, 'foto'])->name('foto');
 Route::post('/update/{team}', [App\Http\Controllers\HomeController::class, 'update'])->name('update');
 Route::get('/edit/{team}', [App\Http\Controllers\HomeController::class, 'edit'])->name('edit');
+Route::get('/delete/{team}', [App\Http\Controllers\HomeController::class, 'delete'])->name('delete');
+
