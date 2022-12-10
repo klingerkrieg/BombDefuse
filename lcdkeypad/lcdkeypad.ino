@@ -2,6 +2,8 @@
 #include <Keypad.h>
 
 
+const String codVer = "cod:1";
+
 //TEMPO
 const int MIN_ = 6;
 const int SEG_ = 0;
@@ -10,37 +12,38 @@ const int SEG_ = 0;
 int penalidadeMin = 1;
 
 //fios
-const int fazul     = 53;
-const int fverde    = 51;
-const int famarelo  = 49;
-const int flaranja  = 47;
-const int fvermelho = 43;
-const int froxo     = 52;
-const int fcinza    = 50;
-const int fbranco   = 48;
-const int fpreto    = 46;
-const int fmarrom   = 44;
+const int fpreto      = 53;
+const int fbranco     = 51;
+const int fcinza      = 49;
+const int froxo       = 47;
+const int fazul       = 45;
+
+const int fverde      = 52;
+const int famarelo    = 50;
+const int flaranja    = 48;
+const int fvermelho   = 46;
+const int fmarrom     = 44;
 
 const int resetPIN  = 21;
 
 //CÓDIGOS
 // VERSAO 1
-String codigosV1[] = {"111","1111","11111"};
-String descricoesV1[] = {"Codigo 1","Codigo 2","Codigo 3"};
-int  sequenciaFiosV1[] = {52, 51, 50, 49};
-int fiosErradosV1[] = {53, 48, 49, 47};
+String codigosV1[] = {"111","1111","11111","1111","11111"};
+String descricoesV1[] = {"Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
+int  sequenciaFiosV1[] = {fazul, famarelo, flaranja, fvermelho, froxo};
+int fiosErradosV1[] = {fmarrom, fpreto, fbranco, fcinza, froxo};
 
 // VERSAO 2
-String codigosV2[] = {"222","2222","22222"};
-String descricoesV2[] = {"Codigo 1","Codigo 2","Codigo 3"};
-int  sequenciaFiosV2[] = {52, 51, 50, 49};
-int fiosErradosV2[] = {49, 50, 51, 52};
+String codigosV2[] = {"222","2222","22222","1111","11111"};
+String descricoesV2[] = {"Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
+int  sequenciaFiosV2[] = {fazul, famarelo, flaranja, fvermelho, froxo};
+int fiosErradosV2[] = {fmarrom, fpreto, fbranco, fcinza, froxo};
 
 // VERSAO 3
-String codigosV3[] = {"333","3333","33333"};
-String descricoesV3[] = {"Codigo 1","Codigo 2","Codigo 3"};
-int  sequenciaFiosV3[] = {52, 51, 49, 50};
-int fiosErradosV3[] = {53, 48, 49, 47};
+String codigosV3[] = {"333","3333","33333","1111","11111"};
+String descricoesV3[] = {"Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
+int  sequenciaFiosV3[] = {fazul, famarelo, flaranja, fvermelho, froxo};
+int fiosErradosV3[] = {fmarrom, fpreto, fbranco, fcinza, froxo};
 
 
 /***
@@ -49,14 +52,21 @@ int fiosErradosV3[] = {53, 48, 49, 47};
 int versaoEscolhida = 0;
 int qtdVersoes = 3;
 
+/**
+ * Dificuldade
+ */
+
+const int difMax = 2;
+int difAtual = 2;
+
 
 /****
  * Digitar códigos
  */
 
-const int paginas = 3;
-String codigos[] = {"","",""};
-String descricoes[] = {"Codigo 1","Codigo 2","Codigo 3"};
+const int paginas = 5;
+String codigos[] = {"","","","1111","11111"};
+String descricoes[] = {"Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
 bool codigosResolvidos[paginas];
 String codigoAtual = "";
 int paginaAtual = -1;
@@ -67,10 +77,14 @@ int paginaAtual = -1;
 
 //Altere a sequencia para mudar a ordem de retirada dos fios
 //Os valores são as portas
-int  sequenciaFios[] = {52, 51, 50, 49};
-const int qtdFios = 4;
-int fiosErrados[] = {53, 48, 49, 47};
-const int qtdFiosErrados = 4;
+//esses dois vetores devem conter todas as cores, para poder
+//emitir o som de teste na inicializacao
+//se algum fio nao estiver conectado ele apita
+int  sequenciaFios[] = {fpreto, fbranco, fcinza, froxo, fazul};
+const int qtdFios = 5;
+int fiosErrados[] = {fverde, famarelo, flaranja, fvermelho, fmarrom};
+const int qtdFiosErrados = 5;
+
 
 //Eses vetor guardará a sequencia que foi realizada
 //Ele irá controlar quando o fio for desconectado
@@ -238,14 +252,15 @@ void gerenciaFiosConectados(){
             min_ -= penalidadeMin;
             errorBeep();
         }
-        if (paginaAtual == -1){
+        //Nao imprime mais os fios que nao devem ser desconectados
+        /*if (paginaAtual == -1){
           if (seqFiosErradosRealizados[i] == true){
               lcd.print("*");
           } else
           if (seqFiosErradosRealizados[i] == false){
               lcd.print("|");
           }
-        }
+        }*/
     }
 
     
@@ -536,9 +551,13 @@ void loop() {
         }
     }
 
+    //vai apitar caso tenha algum fio desconectado
+    verificaFiosConectadosSETUP();
 
     //nao deixa botao ser pressionado mais de uma vez
     if (teclaNova != teclaAnt){
+
+          //muda a versao da bomba
           //tecla pra cima
           if (teclaNova == 1){
               versaoEscolhida++;
@@ -553,10 +572,31 @@ void loop() {
                   versaoEscolhida = qtdVersoes-1;
               }
           }
+
+          //muda a dificuldade com direita/esquerda
+          if (teclaNova == 0){
+              difAtual++;
+              if (difAtual == difMax+1){
+                  difAtual = 0;
+              }
+          } else
+          if (teclaNova == 3){
+              //para baixo
+              difAtual--;
+              if (difAtual < 0){
+                  difAtual = difMax;
+              }
+          }
+
+          
           //Imprime a versao escolhida
+          lcd.setCursor(10,0);
+          lcd.print(codVer);
           lcd.setCursor(0,1);
-          lcd.print(" v");
+          lcd.print("v");
           lcd.print(versaoEscolhida);
+          lcd.print(" diff");
+          lcd.print(difAtual);
           
           tone(buzzerPIN,1000);
           delay(50);
@@ -587,6 +627,14 @@ void loop() {
           memcpy(descricoes, descricoesV3, sizeof(descricoesV3[0])*qtdFios);
           memcpy(sequenciaFios, sequenciaFiosV3, sizeof(sequenciaFiosV3[0])*qtdFios);
           memcpy(fiosErrados, fiosErradosV3, sizeof(fiosErradosV3[0])*qtdFiosErrados);
+      }
+
+
+      if (difAtual == 1){
+          codigosResolvidos[4] = true;
+      } else if (difAtual == 0){
+          codigosResolvidos[4] = true;
+          codigosResolvidos[3] = true;
       }
       
       ativada = true;
@@ -632,4 +680,76 @@ void loop() {
 
   }
  
+}
+
+/**
+ * Verifica e mostra quais fios estão desconectados
+ * na inicialização da bomba
+ */
+
+void verificaFiosConectadosSETUP(){
+    lcd.setCursor(0,0);
+    lcd.print("--:--");
+    //Verifica os fios que nao devem ser desconectados
+    for (int i = 0; i < qtdFiosErrados; i++){
+        //Verifica o fio que foi desconectado
+        if (!digitalRead(fiosErrados[i])){
+            imprimeCorComMalContato(fiosErrados[i]);
+            tone(buzzerPIN,100);
+            delay(50);
+            noTone(buzzerPIN);
+            delay(3000);
+            return;
+        }
+    }
+    //Imprime os fios conectados
+    for (int i = 0; i < qtdFios; i++){
+        //Verifica o fio que foi desconectado
+        if (!digitalRead(sequenciaFios[i])){
+              imprimeCorComMalContato(sequenciaFios[i]);
+              tone(buzzerPIN,100);
+              delay(50);
+              noTone(buzzerPIN);
+              delay(3000);
+              return;
+        }        
+    }
+}
+
+
+void imprimeCorComMalContato(int i){
+    lcd.setCursor(0,0);
+    lcd.clear();
+    switch(i){
+        case fpreto:
+            lcd.print("preto");
+            break;
+        case fbranco:
+            lcd.print("branco");
+            break;
+        case fcinza:
+            lcd.print("cinza");
+            break;
+        case froxo:
+            lcd.print("roxo");
+            break;
+        case fazul:
+            lcd.print("azul");
+            break;
+        case fverde:
+            lcd.print("verde");
+            break;
+        case famarelo:
+            lcd.print("amarelo");
+            break;
+        case flaranja:
+            lcd.print("laranja");
+            break;
+        case fvermelho:
+            lcd.print("vermelho");
+            break;
+        case fmarrom:
+            lcd.print("marrom");
+            break;
+    }
 }
