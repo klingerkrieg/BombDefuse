@@ -610,6 +610,8 @@ void loop() {
     
     if (teclaNova == 4){
 
+      lcd.clear();
+
       //seta as configuracoes da versao escolhida
       if (versaoEscolhida == 0){
           memcpy(codigos, codigosV1, sizeof(codigosV1[0])*paginas);
@@ -689,7 +691,7 @@ void loop() {
 
 void verificaFiosConectadosSETUP(){
     lcd.setCursor(0,0);
-    lcd.print("--:--");
+    lcd.print("--:--   ");
     //Verifica os fios que nao devem ser desconectados
     for (int i = 0; i < qtdFiosErrados; i++){
         //Verifica o fio que foi desconectado
