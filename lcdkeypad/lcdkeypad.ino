@@ -5,7 +5,7 @@
 const String codVer = "cod:1";
 
 //TEMPO
-const int MIN_ = 6;
+const int MIN_ = 15;
 const int SEG_ = 0;
 
 //Penalidade fio ou codigo errado
@@ -28,22 +28,22 @@ const int resetPIN  = 21;
 
 //CÓDIGOS
 // VERSAO 1
-String codigosV1[] = {"111","1111","11111","1111","11111"};
-String descricoesV1[] = {"Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
-int  sequenciaFiosV1[] = {fazul, famarelo, flaranja, fvermelho, froxo};
-int fiosErradosV1[] = {fmarrom, fpreto, fbranco, fcinza, froxo};
+String codigosV1[] = {"14122022","2008","00001111011635","13404","6101157","54544455"};
+String descricoesV1[] = {"Codigo 0","Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
+int  sequenciaFiosV1[] = {fvermelho, famarelo, fazul, fverde, fbranco};
+int fiosErradosV1[] = {fmarrom, fpreto, flaranja, fcinza, froxo};
 
 // VERSAO 2
-String codigosV2[] = {"222","2222","22222","1111","11111"};
-String descricoesV2[] = {"Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
-int  sequenciaFiosV2[] = {fazul, famarelo, flaranja, fvermelho, froxo};
-int fiosErradosV2[] = {fmarrom, fpreto, fbranco, fcinza, froxo};
+String codigosV2[] = {"14122022","6245","0022","56755675","20552353","75004"};
+String descricoesV2[] = {"Codigo 0","Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
+int  sequenciaFiosV2[] = {fbranco, fazul, froxo, fverde, fvermelho};
+int fiosErradosV2[] = {fmarrom, fpreto, flaranja, fcinza, famarelo};
 
 // VERSAO 3
-String codigosV3[] = {"333","3333","33333","1111","11111"};
-String descricoesV3[] = {"Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
-int  sequenciaFiosV3[] = {fazul, famarelo, flaranja, fvermelho, froxo};
-int fiosErradosV3[] = {fmarrom, fpreto, fbranco, fcinza, froxo};
+String codigosV3[] = {"14122022","01469","23187","44433377766","78198555","17893"};
+String descricoesV3[] = {"Codigo 0","Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
+int  sequenciaFiosV3[] = {famarelo, fazul, fvermelho, fverde, froxo};
+int fiosErradosV3[] = {fmarrom, fpreto, fbranco, fcinza, flaranja};
 
 
 /***
@@ -64,9 +64,9 @@ int difAtual = 2;
  * Digitar códigos
  */
 
-const int paginas = 5;
-String codigos[] = {"","","","1111","11111"};
-String descricoes[] = {"Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
+const int paginas = 6;
+String codigos[] = {"","","","","",""};
+String descricoes[] = {"Codigo 0","Codigo 1","Codigo 2","Codigo 3","Codigo 4", "Codigo 5"};
 bool codigosResolvidos[paginas];
 String codigoAtual = "";
 int paginaAtual = -1;
@@ -74,14 +74,11 @@ int paginaAtual = -1;
 /****
  *  Retirada de Fios
  */
-
-//Altere a sequencia para mudar a ordem de retirada dos fios
-//Os valores são as portas
 //esses dois vetores devem conter todas as cores, para poder
 //emitir o som de teste na inicializacao
 //se algum fio nao estiver conectado ele apita
-int  sequenciaFios[] = {fpreto, fbranco, fcinza, froxo, fazul};
 const int qtdFios = 5;
+int  sequenciaFios[] = {fpreto, fbranco, fcinza, froxo, fazul};
 int fiosErrados[] = {fverde, famarelo, flaranja, fvermelho, fmarrom};
 const int qtdFiosErrados = 5;
 
@@ -110,7 +107,7 @@ const int RED   = 37;
 const int GREEN = 35;
 unsigned long int lastLedMillis = 0;
 bool greenRed = false;
-
+bool esperarRearmar = false;
 
 
 /////////////////////////KEYPAD
@@ -242,8 +239,8 @@ void gerenciaFiosConectados(){
             break;
         }
     }
-    lcd.setCursor(0,1);
-    lcd.print(" ");
+    
+    
     //Verifica os fios que nao devem ser desconectados
     for (int i = 0; i < qtdFiosErrados; i++){
         //Verifica o fio que foi desconectado
@@ -261,6 +258,10 @@ void gerenciaFiosConectados(){
               lcd.print("|");
           }
         }*/
+    }
+
+    if (paginaAtual == -1){
+        lcd.setCursor(0,1);
     }
 
     
@@ -359,13 +360,16 @@ void beep(){
             lcd.print("00:00");
             lcd.setCursor(0,1);
             lcd.print("bye bye!");
+            //imprime 'boom' no terminal
+            //para o notebook ler e tocar o audio
+            Serial.println("boom");
             delay(5000);
             ativada = false;
             noTone(buzzerPIN);
             lcd.clear();
             lcd.print("Reiniciando...");
             delay(1000);
-            digitalWrite(resetPIN,LOW);            
+            reset();
         }  
     } else
     if (beepStopMillis <= millis_){
@@ -396,11 +400,7 @@ void beep(){
 void gerenciaCodigosTeclado4x3(){
 
     if (paginaAtual > -1){
-        //Escreve
-        lcd.setCursor(0,1);
-        lcd.print(descricoes[paginaAtual]);
-        lcd.print(":");
-
+        
         char key = keypad.getKey();
         if (key){
 
@@ -415,22 +415,28 @@ void gerenciaCodigosTeclado4x3(){
                     successBeep();
                     codigosResolvidos[paginaAtual] = true;
                     paginaAtual = -1;
+                    lcd.clear();
+                    lcd.setCursor(0,8);
+                    lcd.print("Fio");
                 } else {
                     min_ -= penalidadeMin;
                     errorBeep();
+                    lcd.setCursor(0,1);
+                    lcd.print("              ");
                 }
                 codigoAtual = "";
             } else
             if (key == '#'){
                 codigoAtual = "";
+                lcd.setCursor(0,1);
+                lcd.print("              ");
             } else {
                 codigoAtual = String(codigoAtual + key);
             }
-        }
 
-        lcd.print(codigoAtual);
-        lcd.print("                ");
-      
+            lcd.setCursor(0,1);
+            lcd.print(codigoAtual);
+        }
     }
   
 }
@@ -455,34 +461,42 @@ bool verificaObjetivos(){
 }
 
 
+void reset(){
+    digitalWrite(resetPIN,LOW);
+}
+
  
 // Laço principal
-void loop() {
-
-  /*Serial.println("------------");
-  Serial.print("ativada");
-  Serial.println(ativada);
-  Serial.print("min_");
-  Serial.println(min_);
-  Serial.print("seg_");
-  Serial.println(seg_);
-  Serial.print("beepStopMillis");
-  Serial.println(beepStopMillis);
-  Serial.print("beepStartMillis1");
-  Serial.println(beepStartMillis1);
-  Serial.print("beepStartMillis2");
-  Serial.println(beepStartMillis2);
-  Serial.print("beepStartMillis3");
-  Serial.println(beepStartMillis3);
-  Serial.print("ligaBeep");
-  Serial.println(ligaBeep);
-  Serial.print("paginaAtual");
-  Serial.println(paginaAtual);*/
-  
-
-
-  
+void loop() {  
   int ledMillis = 0;
+
+  
+  /***        Lê as teclas do shield ***/
+  static int teclaAnt = -1;   // última tecla detectada
+  // Lê a tensão no pino A0
+  int leitura = analogRead(A0);
+  // Identifica a tecla apertada pela tensão lida
+  int teclaNova;
+  for (teclaNova = 0; ; teclaNova++) {
+    if (leitura < teclas[teclaNova].limite) {
+      break;
+    }
+  }
+
+
+  //Após desarmar vai entrar nesse loop esperando o rearme
+  //espera aqui para poder ler o tempo no relogio
+  if (esperarRearmar){
+      if (teclaAnt != teclaNova){
+          if (teclaNova == 4){
+              lcd.setCursor(0,1);
+              lcd.print("Resetando...");
+              delay(1000);
+              reset();
+          }
+      }
+      return;
+  }
 
   //Quando ativada começará a contar
   if (ativada){
@@ -511,10 +525,12 @@ void loop() {
 
 
       if (verificaObjetivos()){
-          ativada = false;
+          //ativada = false;
           //desarmou a bomba
           lcd.setCursor(0,1);
           lcd.print("DESARMADA       ");
+          esperarRearmar = true;
+          return;
       } else {
           beep();
       }
@@ -522,17 +538,6 @@ void loop() {
   }
 
 
-  /***        Lê as teclas do shield ***/
-  static int teclaAnt = -1;   // última tecla detectada
-  // Lê a tensão no pino A0
-  int leitura = analogRead(A0);
-  // Identifica a tecla apertada pela tensão lida
-  int teclaNova;
-  for (teclaNova = 0; ; teclaNova++) {
-    if (leitura < teclas[teclaNova].limite) {
-      break;
-    }
-  }
 
 
 
@@ -594,7 +599,7 @@ void loop() {
           lcd.print(codVer);
           lcd.setCursor(0,1);
           lcd.print("v");
-          lcd.print(versaoEscolhida);
+          lcd.print(versaoEscolhida+1);
           lcd.print(" diff");
           lcd.print(difAtual);
           
@@ -614,32 +619,38 @@ void loop() {
 
       //seta as configuracoes da versao escolhida
       if (versaoEscolhida == 0){
-          memcpy(codigos, codigosV1, sizeof(codigosV1[0])*paginas);
-          memcpy(descricoes, descricoesV1, sizeof(descricoesV1[0])*qtdFios);
-          memcpy(sequenciaFios, sequenciaFiosV1, sizeof(sequenciaFiosV1[0])*qtdFios);
-          memcpy(fiosErrados, fiosErradosV1, sizeof(fiosErradosV1[0])*qtdFiosErrados);
+          memcpy(codigos,       codigosV1,        sizeof(codigosV1[0])*paginas);
+          memcpy(descricoes,    descricoesV1,     sizeof(descricoesV1));
+          memcpy(sequenciaFios, sequenciaFiosV1,  sizeof(sequenciaFiosV1[0])*qtdFios);
+          memcpy(fiosErrados,   fiosErradosV1,    sizeof(fiosErradosV1[0])*qtdFiosErrados);
       } else
       if (versaoEscolhida == 1){
-          memcpy(codigos, codigosV2, sizeof(codigosV2[0])*paginas);
-          memcpy(descricoes, descricoesV2, sizeof(descricoesV2[0])*qtdFios);
-          memcpy(sequenciaFios, sequenciaFiosV2, sizeof(sequenciaFiosV2[0])*qtdFios);
-          memcpy(fiosErrados, fiosErradosV2, sizeof(fiosErradosV2[0])*qtdFiosErrados);
+          memcpy(codigos,       codigosV2,        sizeof(codigosV2[0])*paginas);
+          memcpy(descricoes,    descricoesV2,     sizeof(descricoesV2[0])*paginas);
+          memcpy(sequenciaFios, sequenciaFiosV2,  sizeof(sequenciaFiosV2[0])*qtdFios);
+          memcpy(fiosErrados,   fiosErradosV2,    sizeof(fiosErradosV2[0])*qtdFiosErrados);
       } else {
-          memcpy(codigos, codigosV3, sizeof(codigosV3[0])*paginas);
-          memcpy(descricoes, descricoesV3, sizeof(descricoesV3[0])*qtdFios);
-          memcpy(sequenciaFios, sequenciaFiosV3, sizeof(sequenciaFiosV3[0])*qtdFios);
-          memcpy(fiosErrados, fiosErradosV3, sizeof(fiosErradosV3[0])*qtdFiosErrados);
+          memcpy(codigos,       codigosV3,        sizeof(codigosV3[0])*paginas);
+          memcpy(descricoes,    descricoesV3,     sizeof(descricoesV3[0])*paginas);
+          memcpy(sequenciaFios, sequenciaFiosV3,  sizeof(sequenciaFiosV3[0])*qtdFios);
+          memcpy(fiosErrados,   fiosErradosV3,    sizeof(fiosErradosV3[0])*qtdFiosErrados);
       }
 
 
+      //dificuldade 2 nada muda
       if (difAtual == 1){
-          codigosResolvidos[4] = true;
+          //dificuldade 1 o ultimo codigo ja vem resolvido
+          codigosResolvidos[paginas-1] = true;
       } else if (difAtual == 0){
-          codigosResolvidos[4] = true;
-          codigosResolvidos[3] = true;
+          //dificuldade 0 os dois ultimos codigos vem resolvidos
+          codigosResolvidos[paginas-1] = true;
+          codigosResolvidos[paginas-2] = true;
       }
       
       ativada = true;
+      //imprime 'planted' no terminal
+      //para o notebook ler e tocar o audio
+      Serial.println("planted");
       digitalWrite(GREEN,LOW);
       digitalWrite(RED,LOW);
     }
@@ -654,19 +665,25 @@ void loop() {
           if (teclaNova == 1){
               paginaAtual++;
 
-              while (paginaAtual > -1 and codigosResolvidos[paginaAtual] == true) {
+              while (codigosResolvidos[paginaAtual] == true) {
                   paginaAtual++;
                   if (paginaAtual >= paginas){
                       paginaAtual = -1;
                       break;
                   }
               }
+              if (paginaAtual >= paginas){
+                  paginaAtual = -1;
+              }
           } else
           if (teclaNova == 2){
           //para baixo
               paginaAtual--;
 
-              while (paginaAtual > -1 and codigosResolvidos[paginaAtual] == true) {
+              if (paginaAtual < -1){
+                  paginaAtual = paginas-1;
+              }
+              while (codigosResolvidos[paginaAtual] == true) {
                   paginaAtual--;
                   if (paginaAtual < -1){
                       paginaAtual = paginas-1;
@@ -677,6 +694,15 @@ void loop() {
       }
       // Atualiza a tela se pressionou uma nova tecla
       if (teclaNova != teclaAnt) {
+          lcd.clear();
+
+          //Escreve
+          lcd.setCursor(8,0);
+          if (paginaAtual == -1){
+              lcd.print("Fios");
+          } else {
+              lcd.print(descricoes[paginaAtual]);
+          }
           teclaAnt = teclaNova;
       }
 

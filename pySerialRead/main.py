@@ -19,6 +19,9 @@ try:
         line = ser.readline()
         text = line.decode()
         print(text)
+        if text.strip() == "planted":
+            print("******PLAY SOUND*******")
+            playsound('planted.mp3')
         if text.strip() == "boom":
             print("******PLAY SOUND*******")
             playsound('explode.mp3')
