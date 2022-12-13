@@ -6,6 +6,7 @@ use App\Models\Member;
 use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class HomeController extends Controller
 {
@@ -18,18 +19,32 @@ class HomeController extends Controller
     {
         $this->middleware('auth');
     }
-
     
     public function index() {
-        $teams = Team::orderBy('time','desc')->get();
+        $defuseds = Team::with('members')->orderBy('time','asc')->where("exploded",0)->get();
+        $explodeds = Team::with('members')->orderBy('time','desc')->where("exploded",1)->get();
+        
+        $teams = array_merge($defuseds->toArray(),$explodeds->toArray());
+        
         return view('home', ["teams"=>$teams]);
     }
 
     public function new(){
-        return view("form",["team"=>new Team()]);
+        $canDelete = Auth::user()->email == "klingerkrieg@gmail.com";
+        
+        return view("form",["team"=>new Team(),
+                            "canDelete"=>$canDelete]);
+    }
+
+    protected function validator(array $data) {
+        return Validator::make($data, [
+            'team_name' => ['required', 'string', 'max:255'],
+        ]);
     }
 
     public function save(Request $request){
+        $this->validator($request->all())->validate();
+        
         $team = Team::create($request->all());
         
         $names = $request->get("name");
@@ -64,7 +79,9 @@ class HomeController extends Controller
 
         $canDelete = Auth::user()->email == "klingerkrieg@gmail.com";
 
-        return view("form",["team"=>$team, "members"=>$team->members,"canDelete"=>$canDelete]);
+        return view("form",["team"=>$team, 
+                            "members"=>$team->members,
+                            "canDelete"=>$canDelete]);
     }
 
     public function update(Team $team, Request $request){

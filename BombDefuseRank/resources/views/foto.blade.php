@@ -14,8 +14,12 @@
 
         body{
             background-color: black;
-            color:red;
-            font-size: 35em;
+            @if ($team->exploded)
+                color:red;
+            @else
+                color:lime;
+            @endif
+            font-size: 25em;
             font-family: 'AlarmClock';
             align-items: center;
             justify-content: center;
@@ -37,6 +41,11 @@
 </head>
 <body>
     <div id="name">{{$team->team_name}}</div>
+    @if ($team->exploded)
+        <div id="name">explodiu</div>
+    @else
+        <div id="name">desarmmada</div>
+    @endif
     {{$team->time}}
 </body>
 </html>

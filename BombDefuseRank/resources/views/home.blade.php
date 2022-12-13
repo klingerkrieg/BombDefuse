@@ -19,11 +19,9 @@
 
                     <ol>
                     @foreach ($teams as $team)
-                        <li><a href="{{route('edit',$team)}}">{{$team->time}} {{$team->team_name}}</a></li>
+                        <li><a href="{{route('edit',$team['id'])}}">{{$team['time']}} {{$team['team_name']}}</a></li>
                     @endforeach
                     </ol>
-
-                    
 
                 </div>
             </div>

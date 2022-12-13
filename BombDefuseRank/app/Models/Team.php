@@ -9,7 +9,7 @@ class Team extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["team_name", "time"];
+    protected $fillable = ["team_name", "time", "difficult", "exploded"];
 
     public function members(){
         return $this->hasMany(Member::class);

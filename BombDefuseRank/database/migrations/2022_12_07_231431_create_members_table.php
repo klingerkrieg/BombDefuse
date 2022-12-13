@@ -16,8 +16,8 @@ class CreateMembersTable extends Migration
         Schema::create('members', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('age');
-            $table->string('course');
+            $table->string('age')->nullable();
+            $table->string('course')->nullable();
             $table->foreignId("team_id")->constrained();
             $table->timestamps();
         });

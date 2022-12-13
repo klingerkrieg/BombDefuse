@@ -10,7 +10,11 @@ class WelcomeController extends Controller
 {
     
     public function index() {
-        $teams = Team::orderBy('time','desc')->get();
+        $defuseds = Team::with('members')->orderBy('time','asc')->where("exploded",0)->get();
+        $explodeds = Team::with('members')->orderBy('time','desc')->where("exploded",1)->get();
+        
+        $teams = array_merge($defuseds->toArray(),$explodeds->toArray());
+        
         return view('welcome', ["teams"=>$teams]);
     }
 

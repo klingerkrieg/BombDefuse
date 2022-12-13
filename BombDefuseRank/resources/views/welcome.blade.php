@@ -38,11 +38,11 @@ function verEquipe(id){
                         @foreach ($teams as $k=>$team)
                             <tr>
                                 <th scope="row">{{$k+1}}</th>
-                                <td>{{$team->time}}</td>
-                                <td>{{$team->team_name}}
+                                <td>{{$team['time']}}</td>
+                                <td>{{$team['team_name']}}
                                     
                                     
-                                    @if ($team->time == "00:00")
+                                    @if ($team['exploded'] == 1)
                                         <img src="{{asset("explode.png")}}" style="height:22px;">
                                     @elseif ($k == 0)
                                         <img src="{{asset("trofeu.png")}}" style="height:22px;">
@@ -54,14 +54,14 @@ function verEquipe(id){
                                         <img src="{{asset("alicate.png")}}" style="height:22px;">
                                     @endif
                                 </td>
-                                <td><a href='#' onclick="verEquipe({{$team->id}})">Ver equipe</a></td>
+                                <td><a href='#' onclick="verEquipe({{$team['id']}})">Ver equipe</a></td>
                             </tr>
 
-                            <tr id='{{$team->id}}' class='visually-hidden'>
+                            <tr id='{{$team['id']}}' class='visually-hidden'>
                                 <td colspan="4">
                                     <ul>
-                                        @foreach ($team->members as $member)
-                                            <li>{{$member->name}} ({{$member->course}})</li>
+                                        @foreach ($team['members'] as $member)
+                                            <li>{{$member['name']}} ({{$member['course']}})</li>
                                         @endforeach
                                     </ul>
                                 </td>

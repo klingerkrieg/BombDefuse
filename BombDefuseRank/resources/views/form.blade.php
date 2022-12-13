@@ -1,6 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
+
+<style>
+
+red{
+    color:red;
+}
+
+
+</style>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -18,13 +28,38 @@
                     @endif
 
                         <div class='row'>
-                            <label class='col-md'>Nome da equipe
-                                <input name="team_name" class="form-control" type="text" value="{{$team->team_name}}">
+                            <label class='col-md'>Nome da equipe <red>*</red>
+                                <input name="team_name" class="form-control @error('team_name') is-invalid @enderror" type="text" value="{{$team->team_name}}">
+                                
+                                @error('team_name')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
                             </label>
 
-                            <label class='col-md-4'>Tempo restante
+                            <label class='col-md-3'>Tempo
                                 <input name="time" class="form-control" type="time" max="18:00" min="00:00" value="{{$team->time}}">
+                                <span class="form-text text-muted">Tempo que a equipe levou para explodir ou desarmar.</span>
                             </label>
+
+                            <label class='col-md-3'>Dificuldade
+                                <select name="difficult" class="form-control">
+                                    <option value="3" @if ($team->difficult == 3) {{"selected"}} @endif>Normal</option>
+                                    <option value="2" @if ($team->difficult == 2) {{"selected"}} @endif>Fácil</option>
+                                    <option value="1" @if ($team->difficult == 1) {{"selected"}} @endif>Muito fácil</option>
+                                </select>
+                            </label>
+
+                        </div>
+
+                        <div class='row'>
+
+                            <label class='col-md-3'>
+                                <input type="hidden" name="exploded" value="0" >
+                                <input name="exploded" class="form-check-input" type="checkbox" @if ($team->exploded == 1) {{"checked"}} @endif value="1">
+                                A bomba explodiu
+                            </label>
+                            
+                            
                         </div>
 
                         @for ($i = 0; $i < 5; $i++)
@@ -32,7 +67,7 @@
                             <h5 class="border-bottom mt-5">Membro {{$i+1}}</h5>
                             <div class='row'>
 
-                                <label class='col-md-6'> Nome
+                                <label class='col-md-6'> Nome <red>*</red>
                                     <input name="name[{{$i}}]" class="form-control" type="text" value="{{$members[$i]->name ?? null}}">
                                 </label>
 
@@ -61,9 +96,11 @@
                         <button type="submit" class="btn btn-primary col-md-2" form="form">Salvar</button>
                         <a href="{{route("new")}}" class="btn btn-secondary col-md-2">Novo</a>
                         <a href="{{route("home")}}" class="btn btn-secondary col-md-2">Rank</a>
-                        <a href="{{route("foto",$team)}}" class="btn btn-success col-md-2">Foto</a>
-                        @if ($canDelete)
-                            <a href="{{route("delete",$team)}}" class="btn btn-danger col-md-2">Deletar</a>                            
+                        @if ($team->id)
+                            <a href="{{route("foto",$team)}}" class="btn btn-success col-md-2">Foto</a>
+                            @if ($canDelete)
+                                <a href="{{route("delete",$team)}}" class="btn btn-danger col-md-2">Deletar</a>                            
+                            @endif
                         @endif
                     </div>
 
