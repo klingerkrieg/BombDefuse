@@ -529,6 +529,7 @@ void loop() {
           //desarmou a bomba
           lcd.setCursor(0,1);
           lcd.print("DESARMADA       ");
+          Serial.println("defused");
           esperarRearmar = true;
           return;
       } else {
@@ -545,6 +546,7 @@ void loop() {
   if (ativada == false){
 
     if (lastLedMillis + 1000 < millis()){
+        Serial.println("bomb");
         lastLedMillis = millis();
         greenRed = !greenRed;
         if (greenRed){
