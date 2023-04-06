@@ -27,3 +27,4 @@ Route::post('/update/{team}', [App\Http\Controllers\HomeController::class, 'upda
 Route::get('/edit/{team}', [App\Http\Controllers\HomeController::class, 'edit'])->name('edit');
 Route::get('/delete/{team}', [App\Http\Controllers\HomeController::class, 'delete'])->name('delete');
 
+Route::post('/arduino-data/{team}', [App\Http\Controllers\HomeController::class, 'receiveArduinoDataFromPython']);

@@ -16,34 +16,34 @@ const int SEG_ = 0;
 int penalidadeMin = 1;
 
 //fios
-/*const int fpreto      = 53;
+const int fpreto      = 53;
 const int fbranco     = 51;
 const int fcinza      = 49;
 const int froxo       = 47;
-const int fazul       = 45;*/
+const int fazul       = 45;
 
-const int fverde      = 2;
-const int famarelo    = 3;
-const int flaranja    = 4;
-const int fvermelho   = 5;
-const int fmarrom     = 6;
+const int fverde      = 52;
+const int famarelo    = 50;
+const int flaranja    = 48;
+const int fvermelho   = 46;
+const int fmarrom     = 44;
 
-const int resetPIN  = 21;
+const int buzzerPIN = 15; //DISABLED (sete o buzzer para o 15 caso queira desativar)
+//const int buzzerPIN = 14; //ENABLED
 
 //CÓDIGOS
 String codigos[]      = {"1","22","333"};
 const int qtdCodigos  = 3;
 int  fiosCertos[]     = {fverde, famarelo, flaranja};
-int fiosErrados[]     = {fvermelho, fmarrom};
+
+int fiosErrados[]     = {fvermelho, fmarrom, fpreto, fbranco, fcinza, froxo, };
 const int qtdFiosCertos = 3;
-const int qtdFiosErrados = 2;
+const int qtdFiosErrados = 6;
 
 bool fiosCertosRealizados[qtdFiosCertos];
 bool fiosErradosRealizados[qtdFiosErrados];
 bool codigosResolvidos[qtdCodigos];
 String codigoAtual = "";
-int paginaAtual = -1;
-
 
 
 /****
@@ -72,13 +72,13 @@ char keys[ROWS][COLS] = { // Matrix defining character to return for each key
   {'7','8','9'},
   {'*','0','#'}
 };
-byte rowPins[ROWS] = {12, 7, 8, 10}; //connect to the row pins (R0-R3) of the keypad
-byte colPins[COLS] = {11, 13, 9}; //connect to the column pins (C0-C2) of the keypad
+byte rowPins[ROWS] = {24, 34, 32, 28}; //connect to the row pins (R0-R3) of the keypad
+byte colPins[COLS] = {26, 22, 30}; //connect to the column pins (C0-C2) of the keypad
 //initialize an instance of class
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 ////////////////////////////////
 
-const int buzzerPIN = 14;
+
  
 // Limites para detecção das teclas, em ordem crescente
 struct {
@@ -101,10 +101,7 @@ void setup() {
   pinMode(GREEN,OUTPUT);
   pinMode(RED,OUTPUT);
 
-  digitalWrite(resetPIN, HIGH);
-  pinMode(resetPIN,OUTPUT);
   
-
   //Inicia os vetores
   //Seta as portas como entrada
   for (int i = 0; i < qtdFiosErrados; i++){
@@ -178,7 +175,12 @@ void gerenciaFiosConectados(){
     for (int i = 0; i < qtdFiosCertos; i++){
         if (fiosCertosRealizados[i] == false && !digitalRead(fiosCertos[i])){
             fiosCertosRealizados[i] = true;
+            //quando desativer um fio correto
+            //toca o som de sucesso
             successBeep();
+            //imprime no terminal
+            Serial.print("wire;");
+            Serial.println(i);
         }
     }
     
@@ -189,6 +191,8 @@ void gerenciaFiosConectados(){
             fiosErradosRealizados[i] = true;
             min_ -= penalidadeMin;
             errorBeep();
+            Serial.print("wrong wire;");
+            Serial.println(i);
         }
     }
 
@@ -272,10 +276,6 @@ void beep(){
             delay(5000);
             ativada = false;
             noTone(buzzerPIN);
-            lcd.clear();
-            lcd.print("Reiniciando...");
-            delay(1000);
-            reset();
         }  
     } else
     if (beepStopMillis <= millis_){
@@ -328,6 +328,10 @@ void gerenciaCodigosTeclado4x3(){
                     successBeep();
                     lcd.setCursor(0,1);
                     lcd.print("Codigo aceito "); 
+                    //após tocar o beep de sucesso
+                    //imprime no terminal
+                    Serial.print("code;");
+                    Serial.println(i);
                     break;
                 }
             }
@@ -337,6 +341,7 @@ void gerenciaCodigosTeclado4x3(){
                 errorBeep();
                 lcd.setCursor(0,1);
                 lcd.print("Codigo recusado ");
+                Serial.println("wrong code;"+codigoAtual);
             }
             
             codigoAtual = "";
@@ -379,25 +384,16 @@ bool verificaObjetivos(){
 }
 
 
-void reset(){
-    digitalWrite(resetPIN,LOW);
-}
 
- 
+int lastTestBeep = 0;
 // Laço principal
 void loop() {  
   int ledMillis = 0;
+  
 
   //Após desarmar vai entrar nesse loop esperando o rearme
-  //espera aqui para poder ler o tempo no relogio
+  //ela sera rearmada automaticamente quando a aplicação python for reiniciada
   if (esperarRearmar){
-      char key = keypad.getKey();
-      if (key == '*'){
-              lcd.setCursor(0,1);
-              lcd.print("Resetando...");
-              delay(1000);
-              reset();
-      }
       return;
   }
 
@@ -441,9 +437,10 @@ void loop() {
   }
 
 
-
+  //Esperando ativação da bomba
   if (ativada == false){
 
+    //pisca o led verde e vermelho para testar os leds
     if (lastLedMillis + 1000 < millis()){
         Serial.println("bomb");
         lastLedMillis = millis();
@@ -464,13 +461,20 @@ void loop() {
     lcd.setCursor(12,0);
     lcd.print(codVer);
     lcd.setCursor(0,1);
-    //Toca o beep de teste
-    tone(buzzerPIN,1000);
-    delay(50);
-    noTone(buzzerPIN);
+
+    //Toca o beep de teste a cada 15 segundos
+    //para confirmar que o beep está funcionando
+    if (lastTestBeep + 15000 < millis()){
+      tone(buzzerPIN,1000);
+      delay(50);
+      noTone(buzzerPIN);
+      lastTestBeep = millis();
+    }
 
     //recebe teclado
     char key = keypad.getKey();
+
+    //inicia a bomba com a tecla *
     if (key == '*'){
         startBomb(); 
     }
@@ -528,7 +532,7 @@ void imprimeCorComMalContato(int i){
     lcd.setCursor(0,0);
     lcd.clear();
     switch(i){
-        /*case fpreto:
+        case fpreto:
             lcd.print("preto");
             break;
         case fbranco:
@@ -542,7 +546,7 @@ void imprimeCorComMalContato(int i){
             break;
         case fazul:
             lcd.print("azul");
-            break;*/
+            break;
         case fverde:
             lcd.print("verde");
             break;
