@@ -27,6 +27,9 @@ red{
                             @csrf
                     @endif
 
+                        <h4>Código da equipe: {{$team->id}}</h4>
+                        <hr/>
+
                         <div class='row'>
                             <label class='col-md'>Nome da equipe <red>*</red>
                                 <input name="team_name" class="form-control @error('team_name') is-invalid @enderror" type="text" value="{{$team->team_name}}">
@@ -39,14 +42,6 @@ red{
                             <label class='col-md-3'>Tempo
                                 <input name="time" class="form-control" type="time" max="18:00" min="00:00" value="{{$team->time}}">
                                 <span class="form-text text-muted">Tempo que a equipe levou para explodir ou desarmar.</span>
-                            </label>
-
-                            <label class='col-md-3'>Dificuldade
-                                <select name="difficult" class="form-control">
-                                    <option value="3" @if ($team->difficult == 3) {{"selected"}} @endif>Normal</option>
-                                    <option value="2" @if ($team->difficult == 2) {{"selected"}} @endif>Fácil</option>
-                                    <option value="1" @if ($team->difficult == 1) {{"selected"}} @endif>Muito fácil</option>
-                                </select>
                             </label>
 
                         </div>
@@ -91,6 +86,30 @@ red{
                         @endfor
 
                     </form>
+
+                    <h4>Detalhes - Pontuação: {{number_format($team->score,2)}} </h4>
+
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Hora</th>
+                            <th scope="col">Valor</th>
+                            <th scope="col">Pontos</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ($team->events as $event)
+                            <tr>
+                                <th scope="row">{{$event->name}}</th>
+                                <td>{{$event->time}}</td>
+                                <td>{{$event->type}}</td>
+                                <td>{{number_format($event->score,2)}}</td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                      </table>
+                    
 
                     <div class="row gap-3 mt-3 d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary col-md-2" form="form">Salvar</button>

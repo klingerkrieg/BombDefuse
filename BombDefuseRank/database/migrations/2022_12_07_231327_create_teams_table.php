@@ -17,7 +17,6 @@ class CreateTeamsTable extends Migration
             $table->id();
             $table->string('team_name');
             $table->string('time')->nullable();
-            $table->integer('difficult');
             $table->boolean('exploded')->default(0);
             $table->timestamps();
         });

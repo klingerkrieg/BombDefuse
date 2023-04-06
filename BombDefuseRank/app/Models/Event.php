@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class Event extends Model {
-    use HasFactory;
+
+    public $timestamps = false;
 
     protected $fillable = ["name", "time", "type", "team_id"];
 
@@ -14,5 +16,14 @@ class Event extends Model {
         return $this->belongsTo(Team::class);
     }
 
+    public function getScoreAttribute(){
+        if ($this->name == "wire" || $this->name == "code" || $this->name == "defused"){
+            $totalTime = Carbon::parse("15:00");
+            $time = Carbon::parse($this->time);
+            return $totalTime->diffInMinutes($time)/60;
+        } else {
+            return 0;
+        }
+    }
     
 }

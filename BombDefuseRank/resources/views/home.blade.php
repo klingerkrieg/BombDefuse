@@ -19,7 +19,7 @@
 
                     <ol>
                     @foreach ($teams as $team)
-                        <li><a href="{{route('edit',$team['id'])}}">{{$team['time']}} {{$team['team_name']}}</a></li>
+                        <li><a href="{{route('edit',$team['id'])}}">{{$team['time']}} {{$team['team_name']}} ({{number_format($team->score,2)}})</a></li>
                     @endforeach
                     </ol>
 

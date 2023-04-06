@@ -31,6 +31,7 @@ function verEquipe(id){
                         <th scope="col">#</th>
                         <th scope="col">Tempo</th>
                         <th scope="col">Equipe</th>
+                        <th scope="col">Pontuação</th>
                         <th></th>
                         </tr>
                     </thead>
@@ -53,6 +54,9 @@ function verEquipe(id){
                                     @else
                                         <img src="{{asset("alicate.png")}}" style="height:22px;">
                                     @endif
+                                </td>
+                                <td>
+                                    {{number_format($team->score,2)}}
                                 </td>
                                 <td><a href='#' onclick="verEquipe({{$team['id']}})">Ver equipe</a></td>
                             </tr>
