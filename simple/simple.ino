@@ -28,17 +28,17 @@ const int flaranja    = 48;
 const int fvermelho   = 46;
 const int fmarrom     = 44;
 
-const int buzzerPIN = 15; //DISABLED (sete o buzzer para o 15 caso queira desativar)
-//const int buzzerPIN = 14; //ENABLED
+//const int buzzerPIN = 15; //DISABLED (sete o buzzer para o 15 caso queira desativar)
+const int buzzerPIN = 14; //ENABLED
 
 //CÓDIGOS
 String codigos[]      = {"1","22","333"};
 const int qtdCodigos  = 3;
 int  fiosCertos[]     = {fverde, famarelo, flaranja};
 
-int fiosErrados[]     = {fvermelho, fmarrom, fpreto, fbranco, fcinza, froxo, };
-const int qtdFiosCertos = 3;
-const int qtdFiosErrados = 6;
+int fiosErrados[]     = {fvermelho, fmarrom, fpreto, fbranco, fcinza, froxo, fazul};
+const int qtdFiosCertos = sizeof(fiosCertos) / sizeof(fiosCertos[0]);
+const int qtdFiosErrados = sizeof(fiosErrados) / sizeof(fiosErrados[0]);;
 
 bool fiosCertosRealizados[qtdFiosCertos];
 bool fiosErradosRealizados[qtdFiosErrados];
@@ -124,6 +124,11 @@ void setup() {
   lcd.init();
   lcd.backlight();
   lcd.print("--:--");
+
+
+  tone(buzzerPIN,1000);
+  delay(50);
+  noTone(buzzerPIN);
 }
 
 
@@ -434,11 +439,8 @@ void loop() {
           beep();
       }
       
-  }
-
-
+  } else {
   //Esperando ativação da bomba
-  if (ativada == false){
 
     //pisca o led verde e vermelho para testar os leds
     if (lastLedMillis + 1000 < millis()){
@@ -454,6 +456,11 @@ void loop() {
         }
     }
 
+    lcd.setCursor(0,0);
+    lcd.print("--:--   ");
+    lcd.setCursor(0,1);
+    lcd.print("              ");
+
     //vai apitar caso tenha algum fio desconectado
     verificaFiosConectadosSETUP();
 
@@ -462,9 +469,9 @@ void loop() {
     lcd.print(codVer);
     lcd.setCursor(0,1);
 
-    //Toca o beep de teste a cada 15 segundos
+    //Toca o beep de teste a cada 30 segundos
     //para confirmar que o beep está funcionando
-    if (lastTestBeep + 15000 < millis()){
+    if (lastTestBeep + 30000 < millis()){
       tone(buzzerPIN,1000);
       delay(50);
       noTone(buzzerPIN);
@@ -495,13 +502,9 @@ void startBomb(){
 
 /**
  * Verifica e mostra quais fios estão desconectados
- * na inicialização da bomba
+ * antes de iniciar a bomba
  */
-
 void verificaFiosConectadosSETUP(){
-    lcd.setCursor(0,0);
-    lcd.print("--:--   ");
-    //Verifica os fios que nao devem ser desconectados
     for (int i = 0; i < qtdFiosErrados; i++){
         //Verifica o fio que foi desconectado
         if (!digitalRead(fiosErrados[i])){
@@ -513,7 +516,6 @@ void verificaFiosConectadosSETUP(){
             return;
         }
     }
-    //Imprime os fios conectados
     for (int i = 0; i < qtdFiosCertos; i++){
         //Verifica o fio que foi desconectado
         if (!digitalRead(fiosCertos[i])){
@@ -531,36 +533,51 @@ void verificaFiosConectadosSETUP(){
 void imprimeCorComMalContato(int i){
     lcd.setCursor(0,0);
     lcd.clear();
+    bool desc = false;
     switch(i){
         case fpreto:
             lcd.print("preto");
+            desc = true;
             break;
         case fbranco:
             lcd.print("branco");
+            desc = true;
             break;
         case fcinza:
             lcd.print("cinza");
+            desc = true;
             break;
         case froxo:
             lcd.print("roxo");
+            desc = true;
             break;
         case fazul:
             lcd.print("azul");
+            desc = true;
             break;
         case fverde:
             lcd.print("verde");
+            desc = true;
             break;
         case famarelo:
             lcd.print("amarelo");
+            desc = true;
             break;
         case flaranja:
             lcd.print("laranja");
+            desc = true;
             break;
         case fvermelho:
             lcd.print("vermelho");
+            desc = true;
             break;
         case fmarrom:
             lcd.print("marrom");
+            desc = true;
             break;
+    }
+    if (desc){
+        lcd.setCursor(0,1);
+        lcd.print("desconectado");
     }
 }
