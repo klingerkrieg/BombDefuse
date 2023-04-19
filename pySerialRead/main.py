@@ -39,6 +39,10 @@ else:
     print("Connecting:", port, " ", bauds)
     ser = serial.Serial(port, bauds, timeout=1)
 
+
+print("Digite o código da equipe no sistema de Rank")
+team_id = input()
+
 print("******PLAY ok*******")
 playsound('audios/ok.mp3')
 
@@ -58,6 +62,8 @@ def getTime():
 
 fname = datetime.now().strftime("%Y-%m-%d %H.%M.%S")
 f = open("queue/"+fname+".txt", "w")
+
+f.write("team;"+team_id+"\n")
 
 start_time = time.time()
 f.write("event;time;type;\n")
