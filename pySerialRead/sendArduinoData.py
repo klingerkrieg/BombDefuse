@@ -15,17 +15,19 @@ def convert_data(file):
 
 	return team_id, data
 
-path = "./queue/"
-dirs = os.listdir( path )
 
-# api-endpoint
-URL = "http://localhost:8000/arduino-data/"
+def send_data_to_server():
+	path = "./queue/"
+	dirs = os.listdir( path )
 
-for file in dirs:
-	if (file.endswith(".txt")):
-		team, data = convert_data(path+file)
-		r = requests.post(url = URL+team, json=data)
-		
-		resp = r.text
-		if resp.strip() == 'saved':
-			os.rename(path+file,"./sent/"+file)
+	# api-endpoint
+	URL = "http://localhost:8000/arduino-data/"
+
+	for file in dirs:
+		if (file.endswith(".txt")):
+			team, data = convert_data(path+file)
+			r = requests.post(url = URL+team, json=data)
+			
+			resp = r.text
+			if resp.strip() == 'saved':
+				os.rename(path+file,"./sent/"+file)

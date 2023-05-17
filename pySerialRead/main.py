@@ -2,7 +2,7 @@ from playsound import playsound
 import serial, sys
 import time
 from datetime import datetime
-
+import sendArduinoData
 
 bauds = 9600
 if (len(sys.argv) == 3):
@@ -112,6 +112,10 @@ except:
 
 f.close()
 
-#envia para o banco
+#mostra como ficou
 f = open("queue/"+fname+".txt", "r")
 print(f.read())
+f.close()
+
+#envia para o banco
+sendArduinoData.send_data_to_server()
