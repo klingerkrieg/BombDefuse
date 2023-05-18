@@ -27,7 +27,7 @@ class HomeController extends Controller
         
         #$teams = array_merge($defuseds->toArray(),$explodeds->toArray());
 
-        $teams = Team::with('members')->get()->sortByDesc("score");
+        $teams = Team::with('members')->where("event_name",env("APP_EVENT_NAME"))->get()->sortByDesc("score");
         
         return view('home', ["teams"=>$teams]);
     }
@@ -48,7 +48,9 @@ class HomeController extends Controller
     public function save(Request $request){
         $this->validator($request->all())->validate();
         
-        $team = Team::create($request->all());
+        $data = $request->all();
+        $data["event_name"] = env("APP_EVENT_NAME");
+        $team = Team::create($data);
         
         $names = $request->get("name");
         foreach($names as $key=>$name){
@@ -69,6 +71,9 @@ class HomeController extends Controller
         #remove todos
         foreach($team->members as $member){
             $member->delete();
+        }
+        foreach($team->events as $evt){
+            $evt->delete();
         }
         $team->delete();
         return redirect(route('dashboard'));
@@ -111,27 +116,4 @@ class HomeController extends Controller
         return redirect(route("edit",$team));
     }
 
-    public function receiveArduinoDataFromPython(Team $team, Request $request){
-
-        print_r($request);
-        die();
-
-        $data = [];
-        $data['exploded'] = true;
-        foreach($request["events"] as $event){
-            $event["team_id"] = $team->id;
-            Event::create($event);
-            
-            if ($event["name"] == "defused"){
-                $data['exploded'] = false;
-                $data['time']     = $event['time'];
-            } else
-            if ($event["name"] == "exploded"){
-                $data['time']     = $event['time'];
-            }
-        }
-
-        $team->update($data);
-        print "saved";
-    }
 }

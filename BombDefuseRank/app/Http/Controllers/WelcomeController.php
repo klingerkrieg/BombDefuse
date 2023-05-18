@@ -14,7 +14,7 @@ class WelcomeController extends Controller
         #$explodeds = Team::with('members')->orderBy('time','desc')->where("exploded",1)->get();
         
         #$teams = array_merge($defuseds->toArray(),$explodeds->toArray());
-        $teams = Team::with('members')->get()->sortByDesc("score");
+        $teams = Team::with('members')->where("event_name",env("APP_EVENT_NAME"))->get()->sortByDesc("score");
         
         return view('welcome', ["teams"=>$teams]);
     }

@@ -18,6 +18,7 @@ class CreateTeamsTable extends Migration
             $table->string('team_name');
             $table->string('time')->nullable();
             $table->boolean('exploded')->default(0);
+            $table->string('event_name');
             $table->timestamps();
         });
     }

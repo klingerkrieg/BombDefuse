@@ -21,7 +21,11 @@ class Event extends Model {
             $totalTime = Carbon::parse("15:00");
             $time = Carbon::parse($this->time);
             return $totalTime->diffInMinutes($time)/60;
-        } else {
+        } else 
+        if ($this->name == "wrong code" || $this->name == "wrong wire"){
+            return -3;
+        }
+        else {
             return 0;
         }
     }
