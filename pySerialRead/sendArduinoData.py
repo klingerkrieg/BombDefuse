@@ -21,7 +21,8 @@ def send_data_to_server():
 	dirs = os.listdir( path )
 
 	# api-endpoint
-	URL = "http://localhost:8000/arduino-data/"
+	#URL = "http://localhost:8000/arduino-data/"
+	URL = "https://experimentalapps.tech/bomb/arduino-data/"
 
 	for file in dirs:
 		if (file.endswith(".txt")):

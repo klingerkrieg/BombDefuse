@@ -30,6 +30,7 @@ const int fmarrom     = 44;
 
 //const int buzzerPIN = 15; //DISABLED (sete o buzzer para o 15 caso queira desativar)
 const int buzzerPIN = 14; //ENABLED
+const int buzzerLEDPIN = 10;
 
 //CÓDIGOS
 String codigos[]      = {"1","22","333"};
@@ -100,6 +101,7 @@ void setup() {
 
   pinMode(GREEN,OUTPUT);
   pinMode(RED,OUTPUT);
+  pinMode(buzzerLEDPIN,OUTPUT);
 
   
   //Inicia os vetores
@@ -241,6 +243,7 @@ void beep(){
   
         //beep
         tone(buzzerPIN, freq);
+        digitalWrite(buzzerLEDPIN,HIGH);
         beepStopMillis = millis_ + tempoBeep;        
 
         if (min_ < 1 && seg_ < 30) {
@@ -281,24 +284,31 @@ void beep(){
             delay(5000);
             ativada = false;
             noTone(buzzerPIN);
+            digitalWrite(buzzerLEDPIN,LOW);
+            esperarRearmar = true;
+            return;
         }  
     } else
     if (beepStopMillis <= millis_){
         noTone(buzzerPIN);
+        digitalWrite(buzzerLEDPIN,LOW);
     }
 
     if (beepStartMillis1 > 0 && beepStartMillis1 <= millis()){
         tone(buzzerPIN, freq);
+        digitalWrite(buzzerLEDPIN,HIGH);
         beepStopMillis = millis() + tempoBeep;
         beepStartMillis1 = 0;
     } else
     if (beepStartMillis2 > 0 && beepStartMillis2 <= millis()){
         tone(buzzerPIN, freq);
+        digitalWrite(buzzerLEDPIN,HIGH);
         beepStopMillis = millis() + tempoBeep;
         beepStartMillis2 = 0;
     } else
     if (beepStartMillis3 > 0 && beepStartMillis3 <= millis()){
         tone(buzzerPIN, freq);
+        digitalWrite(buzzerLEDPIN,HIGH);
         beepStopMillis = millis() + tempoBeep;
         beepStartMillis3 = 0;
     }
@@ -399,12 +409,13 @@ void loop() {
   //Após desarmar vai entrar nesse loop esperando o rearme
   //ela sera rearmada automaticamente quando a aplicação python for reiniciada
   if (esperarRearmar){
+      noTone(buzzerPIN);
+      digitalWrite(buzzerLEDPIN,LOW);
       return;
   }
 
   //Quando ativada começará a contar
   if (ativada){
-
       //registro o tempo onde a bomba realmente começou a contar
       if (lastMilliSecond == 0){
           lastMilliSecond = millis();  
@@ -441,7 +452,6 @@ void loop() {
       
   } else {
   //Esperando ativação da bomba
-
     //pisca o led verde e vermelho para testar os leds
     if (lastLedMillis + 1000 < millis()){
         Serial.println("bomb");

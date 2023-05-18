@@ -1,0 +1,14 @@
+team;5
+event;time;type;
+started;00:00;
+wrong code;00:05;555
+code;00:48;0
+code;01:46;2
+wrong code;01:52;333
+wire;01:58;2
+code;02:04;1
+wrong wire;02:09;3
+wire;02:17;1
+wrong code;02:24;666
+wire;02:26;0
+defused;02:26;
