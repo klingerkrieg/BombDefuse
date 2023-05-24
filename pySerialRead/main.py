@@ -45,6 +45,7 @@ team_id = input()
 
 print("******PLAY ok*******")
 playsound('audios/ok.mp3')
+print("Verifique se todos os fios estao conectados e pode iniciar a bomba")
 
 explodiu = False
 
@@ -74,9 +75,11 @@ try:
         text = line.decode()
         #print(text)
         if text.strip() == "planted":
+            #o tempo começa a contar daqui
             start_time = time.time()
             f.write("started;"+getTime()+";\n")
             print("******PLAY planted*******")
+            print("Comecou a contar o tempo")
             playsound('audios/planted.mp3')
 
         elif text.strip() == "boom":
@@ -119,3 +122,5 @@ f.close()
 
 #envia para o banco
 sendArduinoData.send_data_to_server()
+
+print("Enviado para o sistema")

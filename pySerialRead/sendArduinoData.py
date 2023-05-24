@@ -32,3 +32,5 @@ def send_data_to_server():
 			resp = r.text
 			if resp.strip() == 'saved':
 				os.rename(path+file,"./sent/"+file)
+			elif resp.strip() == 'error':
+				print(file, resp.strip())

@@ -10,6 +10,11 @@ class ArduinoController extends Controller {
 
     public function receiveArduinoDataFromPython(Team $team, Request $request){
 
+        if ($team->getScoreAttribute() != 0){
+            print "error";
+            die();
+        }
+
         $data = [];
         $data['exploded'] = true;
         foreach($request["events"] as $event){

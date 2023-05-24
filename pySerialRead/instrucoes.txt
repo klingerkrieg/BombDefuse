@@ -1,0 +1,19 @@
+1 - Como administrador instale as seguintes bibliotecas no python 3:
+
+pip install playsound==1.2.2
+pip install pyserial
+pip install requests
+
+2 - Para iniciar, primeiramente cadastre a equipe no site: https://experimentalapps.tech/bomb/, cadastre a equipe e copie o código da equipe que o sistema gera.
+
+3 - Inicie a aplicação, e insira o código da equipe.
+python main.py
+
+4 - Para reiniciar a bomba para a próxima equipe, basta executar os passos 2 e 3 novamente.
+
+5 - Caso você insira o código errado, deixe continuar, ao final ele não irá conseguir submeter os dados para o sistema. Você precisará entrar na pasta queue/ localizar o log da equipe que está errada e alterar o código manualmente. 
+Exemplo: Digamos que você digitou o código 1 mas era o código 4, altere o código na primeira linha do arquivo:
+team;1 -> team;4
+
+Após isso execute:
+python sincronizar.py
