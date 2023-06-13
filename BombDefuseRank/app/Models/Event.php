@@ -20,10 +20,13 @@ class Event extends Model {
         if ($this->name == "wire" || $this->name == "code" || $this->name == "defused"){
             $totalTime = Carbon::parse("15:00");
             $time = Carbon::parse($this->time);
-            return $totalTime->diffInMinutes($time)/60;
+            return $totalTime->diffInMinutes($time);
         } else 
         if ($this->name == "wrong code" || $this->name == "wrong wire"){
             return -3;
+        } else
+        if ($this->name == "exploded"){
+            return -50;
         }
         else {
             return 0;

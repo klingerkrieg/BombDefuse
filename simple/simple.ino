@@ -6,7 +6,7 @@
 LiquidCrystal_I2C lcd(0x27,16,2);
 
 //Versao do codigo
-String codVer = "v1.0";
+String codVer = "v1.1";
 
 //TEMPO
 const int MIN_ = 15;
@@ -32,12 +32,22 @@ const int fmarrom     = 44;
 const int buzzerPIN = 14; //ENABLED
 const int buzzerLEDPIN = 10;
 
-//CÓDIGOS
-String codigos[]      = {"1","22","333"};
-const int qtdCodigos  = 3;
-int  fiosCertos[]     = {fverde, famarelo, flaranja};
+//CÓDIGOS DIA 1 SEMADEC
+//String codigos[]      = {"3", "4","90","21","30","40","1929"};
+//const int qtdCodigos  = 7;
+//int  fiosCertos[]     = {fazul, fbranco, fvermelho};
 
-int fiosErrados[]     = {fvermelho, fmarrom, fpreto, fbranco, fcinza, froxo, fazul};
+//int fiosErrados[]     = {flaranja, fmarrom, famarelo, fcinza, froxo, fverde, fpreto};
+
+//CÓDIGOS DIA 2 SEMADEC
+String codigos[]      = {"3", "2002","10","9","14","90"};
+const int qtdCodigos  = 6;
+int  fiosCertos[]     = {fverde, fazul, famarelo, fvermelho};
+
+int fiosErrados[]     = {flaranja, fmarrom, fbranco, fcinza, froxo, fpreto};
+/////////////
+
+
 const int qtdFiosCertos = sizeof(fiosCertos) / sizeof(fiosCertos[0]);
 const int qtdFiosErrados = sizeof(fiosErrados) / sizeof(fiosErrados[0]);;
 
