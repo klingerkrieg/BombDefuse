@@ -1,0 +1,40 @@
+{
+	"info": {
+		"_postman_id": "69ca10a5-43b7-4040-a9d9-af6cb8ed01e1",
+		"name": "BombDefuse",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"events\":[\r\n        {\"name\":\"started\", \"time\":\"00:00\", \"type\":\"\"},\r\n        {\"name\":\"code\", \"time\":\"00:52\", \"type\":\"1\"},\r\n        {\"name\":\"code\", \"time\":\"01:00\", \"type\":\"4\"},\r\n        {\"name\":\"wrong code\", \"time\":\"01:11\", \"type\":\"18\"}\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://sistemasweb.cloud/bomb/public/arduino-data/1",
+					"protocol": "https",
+					"host": [
+						"sistemasweb",
+						"cloud"
+					],
+					"path": [
+						"bomb",
+						"public",
+						"arduino-data",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

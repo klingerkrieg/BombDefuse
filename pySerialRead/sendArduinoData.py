@@ -22,15 +22,18 @@ def send_data_to_server():
 
 	# api-endpoint
 	#URL = "http://localhost:8000/arduino-data/"
-	URL = "https://experimentalapps.tech/bomb/arduino-data/"
+	URL = "https://sistemasweb.cloud/bomb/public/arduino-data/"
 
 	for file in dirs:
 		if (file.endswith(".txt")):
+			print("Sending:", file, end=" ")
 			team, data = convert_data(path+file)
 			r = requests.post(url = URL+team, json=data)
 			
 			resp = r.text
 			if resp.strip() == 'saved':
 				os.rename(path+file,"./sent/"+file)
-			elif resp.strip() == 'error':
+				print("sent.")
+			else:
+				print("Error:")
 				print(file, resp.strip())

@@ -6,10 +6,10 @@
 LiquidCrystal_I2C lcd(0x27,16,2);
 
 //Versao do codigo
-String codVer = "v1.1";
+String codVer = "v1.2";
 
 //TEMPO
-const int MIN_ = 15;
+const int MIN_ = 20;
 const int SEG_ = 0;
 
 //Penalidade fio ou codigo errado
@@ -32,19 +32,12 @@ const int fmarrom     = 44;
 const int buzzerPIN = 14; //ENABLED
 const int buzzerLEDPIN = 10;
 
-//CÓDIGOS DIA 1 SEMADEC
-//String codigos[]      = {"3", "4","90","21","30","40","1929"};
-//const int qtdCodigos  = 7;
-//int  fiosCertos[]     = {fazul, fbranco, fvermelho};
+//CÓDIGOS EXPOTEC-2023
+String codigos[]      = {"20", "68","28","8","18"};
+const int qtdCodigos  = 5;
+int  fiosCertos[]     = {fazul, fbranco, fvermelho, froxo};
 
-//int fiosErrados[]     = {flaranja, fmarrom, famarelo, fcinza, froxo, fverde, fpreto};
-
-//CÓDIGOS DIA 2 SEMADEC
-String codigos[]      = {"3", "2002","10","9","14","90"};
-const int qtdCodigos  = 6;
-int  fiosCertos[]     = {fverde, fazul, famarelo, fvermelho};
-
-int fiosErrados[]     = {flaranja, fmarrom, fbranco, fcinza, froxo, fpreto};
+int fiosErrados[]     = {flaranja, fmarrom, famarelo, fcinza, fpreto, fverde};
 /////////////
 
 

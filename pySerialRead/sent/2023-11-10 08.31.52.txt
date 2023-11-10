@@ -1,0 +1,25 @@
+team;2
+event;time;type;
+started;00:00;
+wrong wire;00:10;1
+wrong wire;00:13;2
+wrong wire;00:15;0
+wrong wire;00:17;5
+wire;00:20;2
+wrong wire;00:28;3
+wrong wire;00:33;4
+wrong code;00:39;11
+code;00:44;0
+wrong code;00:49;12
+wrong code;00:54;23
+wrong code;00:59;58
+wrong code;01:03;78
+wrong code;01:08;98
+wrong code;01:13;78
+wrong code;01:17;78
+wrong code;01:22;78
+wrong code;01:26;48
+wrong code;01:31;58
+wrong code;01:35;58
+wrong code;01:41;58
+exploded;01:44;

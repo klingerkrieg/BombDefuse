@@ -18,15 +18,20 @@ class Event extends Model {
 
     public function getScoreAttribute(){
         if ($this->name == "wire" || $this->name == "code" || $this->name == "defused"){
-            $totalTime = Carbon::parse("15:00");
+            $totalTime = Carbon::parse("20:00");
             $time = Carbon::parse($this->time);
-            return $totalTime->diffInMinutes($time);
+			
+			if ($this->name == "defused"){
+				return $totalTime->diffInMinutes($time)/100 + 100;
+			} else {
+				return $totalTime->diffInMinutes($time)/100;
+			}
         } else 
         if ($this->name == "wrong code" || $this->name == "wrong wire"){
-            return -3;
+            return -5;
         } else
         if ($this->name == "exploded"){
-            return -50;
+            return -100;
         }
         else {
             return 0;
