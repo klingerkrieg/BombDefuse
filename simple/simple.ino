@@ -6,7 +6,7 @@
 LiquidCrystal_I2C lcd(0x27,16,2);
 
 //Versao do codigo
-String codVer = "v1.2";
+String codVer = "v1.3";
 
 //TEMPO
 const int MIN_ = 20;
@@ -33,7 +33,7 @@ const int buzzerPIN = 14; //ENABLED
 const int buzzerLEDPIN = 10;
 
 //CÓDIGOS EXPOTEC-2023
-String codigos[]      = {"26", "20", "68","28","8","18"};
+String codigos[]      = {"120", "20", "68","28","8","18"};
 const int qtdCodigos  = 6;
 int  fiosCertos[]     = {fazul, fbranco, fvermelho, froxo};
 
