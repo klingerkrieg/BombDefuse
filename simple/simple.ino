@@ -33,8 +33,8 @@ const int buzzerPIN = 14; //ENABLED
 const int buzzerLEDPIN = 10;
 
 //CÓDIGOS EXPOTEC-2023
-String codigos[]      = {"20", "68","28","8","18"};
-const int qtdCodigos  = 5;
+String codigos[]      = {"26", "20", "68","28","8","18"};
+const int qtdCodigos  = 6;
 int  fiosCertos[]     = {fazul, fbranco, fvermelho, froxo};
 
 int fiosErrados[]     = {flaranja, fmarrom, famarelo, fcinza, fpreto, fverde};
