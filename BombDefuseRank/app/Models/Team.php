@@ -20,7 +20,7 @@ class Team extends Model
     }
     
     public function getScoreAttribute(){
-        $score = 0;
+        $score = 100;
 
         foreach($this->events as $event){
             $score += $event->score;

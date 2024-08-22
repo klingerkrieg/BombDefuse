@@ -6,7 +6,7 @@
 LiquidCrystal_I2C lcd(0x27,16,2);
 
 //Versao do codigo
-String codVer = "v1.3";
+String codVer = "v1.4 EGAP";
 
 //TEMPO
 const int MIN_ = 20;
@@ -32,12 +32,13 @@ const int fmarrom     = 44;
 const int buzzerPIN = 14; //ENABLED
 const int buzzerLEDPIN = 10;
 
-//CÓDIGOS EXPOTEC-2023
-String codigos[]      = {"120", "20", "68","28","8","18"};
+//CÓDIGOS EGAP-2024
+String codigos[]      = {"89","25","13","5","36","30"};
 const int qtdCodigos  = 6;
-int  fiosCertos[]     = {fazul, fbranco, fvermelho, froxo};
+int qtdCodigosRestantes = qtdCodigos;
+int  fiosCertos[]     = {fazul, famarelo, fvermelho, fverde};
 
-int fiosErrados[]     = {flaranja, fmarrom, famarelo, fcinza, fpreto, fverde};
+int fiosErrados[]     = {flaranja, fmarrom, fbranco, fcinza, fpreto, froxo};
 /////////////
 
 
@@ -217,7 +218,10 @@ void gerenciaFiosConectados(){
         if (fiosCertosRealizados[i] == 1){
             lcd.print(" ");
         }
-    }  
+    }
+
+    lcd.setCursor(15,0);
+    lcd.print(qtdCodigosRestantes);
 }
 
 
@@ -342,6 +346,7 @@ void gerenciaCodigosTeclado4x3(){
               
                 if (codigos[i] == codigoAtual){
                     codigoCorreto = true;
+                    qtdCodigosRestantes--;
                     codigosResolvidos[i] = true;
                     successBeep();
                     lcd.setCursor(0,1);
@@ -478,7 +483,7 @@ void loop() {
     verificaFiosConectadosSETUP();
 
     //Imprime versao
-    lcd.setCursor(12,0);
+    lcd.setCursor(7,0);
     lcd.print(codVer);
     lcd.setCursor(0,1);
 

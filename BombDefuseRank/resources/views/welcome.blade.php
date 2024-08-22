@@ -75,6 +75,9 @@ function verEquipe(id){
                     </tbody>
                     </table>
 
+
+					<a href="https://www.instagram.com/defuse_the_bomb.nc/">
+					 <img style="width:128px;height:128px;" src="{{asset('insta.webp')}}"></a>
                     
 
                 </div>
