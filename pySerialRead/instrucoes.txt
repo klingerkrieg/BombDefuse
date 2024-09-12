@@ -6,12 +6,16 @@ pip install requests
 
 2 - Apague todos os arquivos dentro da pasta queue (Esses são os arquivos que ainda não foram enviados, mas se você está iniciando a bomba pela primeira vez pode apagar todos)
 
-3 - Para iniciar, primeiramente cadastre a equipe no site: https://sistemasweb.cloud/bomb/, cadastre a equipe e copie o código da equipe que o sistema gera.
+3 - Para iniciar, primeiramente cadastre a equipe no site: https://www2.ifrn.edu.br/sirab/bomb/index.php/home, cadastre a equipe e copie o código da equipe que o sistema gera.
 
 4 - Inicie a aplicação, e insira o código da equipe.
 python main.py
 
 5 - Para reiniciar a bomba para a próxima equipe, basta executar os passos 3 e 4 novamente.
+
+
+
+----------------- os passos seguintes são apenas se houver problemas ------------
 
 6 - Caso você insira o código errado, deixe continuar, ao final ele não irá conseguir submeter os dados para o sistema. Você precisará entrar na pasta queue/ localizar o log da equipe que está errada e alterar o código manualmente. 
 Exemplo: Digamos que você digitou o código 1 mas era o código 4, altere o código na primeira linha do arquivo:

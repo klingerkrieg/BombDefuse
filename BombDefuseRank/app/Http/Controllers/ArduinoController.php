@@ -10,8 +10,8 @@ class ArduinoController extends Controller {
 
     public function receiveArduinoDataFromPython(Team $team, Request $request){
 
-        if ($team->getScoreAttribute() != 0){
-            print "error";
+        if (count($team->events) > 0){
+            print "error 1:". count($team->events);
             die();
         }
 
