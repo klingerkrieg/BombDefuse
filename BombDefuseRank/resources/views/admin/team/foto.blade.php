@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Foto da Equipe</title>
     <style>
 
         @font-face {
@@ -44,7 +44,7 @@
     @if ($team->exploded)
         <div id="name">explodiu</div>
     @else
-        <div id="name">desarmmada</div>
+        <div id="name">desarmada</div>
     @endif
     {{$team->time}}
 </body>

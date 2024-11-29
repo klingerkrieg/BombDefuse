@@ -1,0 +1,84 @@
+body{
+    min-height: 100vh;
+    background: radial-gradient(circle, #ffffff 0%, #eeeeee 70%);
+}
+
+main{
+    padding: 2rem 0;
+}
+
+#guest{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.logo{
+    display: block; 
+    max-width: 124px; 
+    max-height: 124px;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+}
+
+.button_home_container{
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin: 2rem auto;
+}
+
+.btn_home {
+    text-align: center;
+    width: 100%;
+    text-decoration: none;
+    font-size: 1.5rem;
+    padding: 15px 30px;
+    color: #ffffff;
+    background: linear-gradient(145deg, #9B59B6, #8E44AD);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease-in-out;
+}
+
+.btn_home.outline {
+    border: 2px solid #8E44AD;
+    color: #8E44AD;
+    background: transparent;
+    box-shadow: none;
+}
+
+.btn_home.outline:hover {
+    border: 2px solid #8E44AD;
+    color: #8E44AD;
+    background: transparent;
+    box-shadow: none;
+}
+
+
+.btn_home:hover {
+    color: #fff;
+    background: linear-gradient(145deg, #8E44AD, #9B59B6);
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.3), -6px -6px 12px rgba(255, 255, 255, 0.4); 
+    transform: translateY(-5px);
+}
+
+.btn_home:active {
+    transform: translateY(0);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.3);
+}
+
+.status_fila{
+    border-radius: 16px;
+    color: #fff;
+    background-color: #ffc107;
+    padding: 0 8px;
+    width: fit-content;
+}
