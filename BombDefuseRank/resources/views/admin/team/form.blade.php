@@ -47,11 +47,18 @@ red{
                                     <span class="form-text text-muted">Tempo que a equipe levou para explodir ou desarmar.</span>
                                 </label>
     
+                            </div>                        
+    
+                            <div class='row'>
+                                <label class='col-md-3'>
+                                    <input type="hidden" name="exploded" value="0" >
+                                    <input name="exploded" class="form-check-input" type="checkbox" @if ($team->exploded == 1) {{"checked"}} @endif value="1">
+                                    A bomba explodiu
+                                </label>
                             </div>
 
-                            
                             @if(isset($equipesFila) && !$equipesFila->isEmpty())
-                                <div class="row mb-3">
+                                <div class="row my-3">
                                     <label> Equipe na Fila
                                         <select class="form-select" name="team_queue_id">
                                             <option value="" disabled {{ old('team_queue_id', $team->team_queue_id ?? '') == '' ? 'selected' : '' }}>Selecione uma equipe da fila</option>
@@ -64,18 +71,6 @@ red{
                                     </label>
                                 </div>
                             @endif
-                           
-    
-                            <div class='row'>
-    
-                                <label class='col-md-3'>
-                                    <input type="hidden" name="exploded" value="0" >
-                                    <input name="exploded" class="form-check-input" type="checkbox" @if ($team->exploded == 1) {{"checked"}} @endif value="1">
-                                    A bomba explodiu
-                                </label>
-    
-    
-                            </div>
     
                             @for ($i = 0; $i < 5; $i++)
                             <div>
@@ -84,7 +79,7 @@ red{
     
                                     <label class='col-md-6'> Nome <red>*</red>
                                         <input name="name[{{$i}}]" class="form-control" type="text" value="{{$members[$i]->name ?? null}}">
-                                    </>
+                                    </label>
     
                                     <label class='col-md-2'> Idade
                                         <input name="age[{{$i}}]" class="form-control" type="text" value="{{$members[$i]->age ?? null}}">
@@ -102,12 +97,32 @@ red{
                                         <input name="grade[{{$i}}]" class="form-control" type="text" value="">
                                     </label>--}}
                                 </div>
+                                <div class="d-flex align-items-center gap-2 mt-3">
+                                    <input type="hidden" name="participate[{{$i}}]" value="0">
+                                    <input 
+                                        class="form-check-input m-0" 
+                                        type="checkbox" 
+                                        name="participate[{{$i}}]" 
+                                        id="participate[{{$i}}]" 
+                                        value="1"
+                                        @if(isset($members) && isset($members[$i]->participate) &&  $members[$i]->participate === 1) checked @endif>
+                                    <label class="form-label m-0" for="participate[{{$i}}]">Já participou de outras edições?</label>
+                                </div>
+                                <div class="mt-3">
+                                    <label style="display: none;">
+                                        <span class="mb-2">Quantas Vezes Participou?</span>
+                                        <input name="participateCount[{{$i}}]" class="form-control" type="number" value="{{$members[$i]->participateCount ?? null}}">
+                                    </label>
+                                </div>
                             </div>
                             @endfor
     
                         </form>
     
-                        <h4>Detalhes - Pontuação: {{number_format($team->score,2)}} </h4>
+                        <h4 class="border-bottom mt-5">Detalhes</h4>
+                        <p style="font-size: 1.2em;">
+                            <strong>Pontuação:</strong> {{number_format($team->score,2)}} 
+                        </p>
     
                         <table class="table">
                             <thead>
@@ -151,5 +166,26 @@ red{
         </div>
     </div>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('[id^="participate["]').forEach(function (checkbox, index) {
+            const participateCountInput = document.querySelector(`input[name="participateCount[${index}]"]`);
+            
+            const toggleVisibility = () => {
+                if (checkbox.checked) {
+                    participateCountInput.closest('label').style.display = 'block';
+                } else {
+                    participateCountInput.closest('label').style.display = 'none';
+                    participateCountInput.value = ''; 
+                }
+            };
+
+            toggleVisibility();
+
+            checkbox.addEventListener('change', toggleVisibility);
+        });
+    });
+</script>
 
 @endsection

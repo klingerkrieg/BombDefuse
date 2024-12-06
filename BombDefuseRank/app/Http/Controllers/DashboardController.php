@@ -54,7 +54,7 @@ class DashboardController extends Controller
     public function save(Request $request){
 
         $this->validator($request->all())->validate();
-        
+
         $data = $request->all();
         $data["event_name"] = env("APP_EVENT_NAME");
         $team = Team::create($data);
@@ -66,6 +66,8 @@ class DashboardController extends Controller
                     "name"=>$name,
                     "age"=>$request->get("age")[$key],
                     "course"=>$request->get("course")[$key],
+                    "participate"=>$request->get("participate")[$key],
+                    "participateCount"=>$request->get("participateCount")[$key],
                     "team_id"=>$team->id
                 ]);
             }
@@ -117,6 +119,8 @@ class DashboardController extends Controller
                     "name"=>$name,
                     "age"=>$request->get("age")[$key],
                     "course"=>$request->get("course")[$key],
+                    "participate"=>$request->get("participate")[$key],
+                    "participateCount"=>$request->get("participateCount")[$key],
                     "team_id"=>$team->id
                 ]);
             }

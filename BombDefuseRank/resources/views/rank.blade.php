@@ -89,5 +89,15 @@ function verEquipe(id){
     </div>
    
 </main>
+
+<script>
+
+    // Atualizando Rank
+    setInterval(() => {
+        window.location.reload();
+    }, 30000)
+    
+</script>
+
 @endsection
 

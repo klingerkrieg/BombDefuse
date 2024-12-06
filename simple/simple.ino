@@ -6,7 +6,7 @@
 LiquidCrystal_I2C lcd(0x27,16,2);
 
 //Versao do codigo
-String codVer = "v1.5 EGAP";
+String codVer = "v1.0 EX24";
 
 //TEMPO
 const int MIN_ = 20;
@@ -33,12 +33,12 @@ const int buzzerPIN = 14; //ENABLED
 const int buzzerLEDPIN = 10;
 
 //CÓDIGOS EGAP-2024
-String codigos[]      = {"123","000","12345678"};
-const int qtdCodigos  = 3;
+String codigos[]      = {"1200","4132","2025","9045","3000"};
+const int qtdCodigos  = 5;
 int qtdCodigosRestantes = qtdCodigos;
-int  fiosCertos[]     = {fazul, famarelo, fvermelho, froxo};
+int  fiosCertos[]     = {fazul, famarelo, fverde};
 
-int fiosErrados[]     = {flaranja, fmarrom, fbranco, fcinza, fpreto, fverde};
+int fiosErrados[]     = {flaranja, fmarrom, fbranco, fcinza, fpreto, fvermelho, froxo};
 /////////////
 
 

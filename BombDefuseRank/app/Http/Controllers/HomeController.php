@@ -20,7 +20,7 @@ class HomeController extends Controller
         // 0 - Equipe não participou
         // 1 - Equipe participou
 
-        $mensagem = "Olá, somos da equipe Defuse The Bomb, estamos passando para avisar que sua equipe é a próxima.";
+        $mensagem = "Olá, somos da equipe Defuse The Bomb. Sua equipe será a próxima a participar! Pedimos para que reúna os demais membros da equipe e se possível tentem chegar aqui na sala dentro de 5 minutos, pois há outras equipes na fila de espera.";
         $mensagemCodificada = urlencode($mensagem);
 
         $equipes = TeamQueue::where('status', '!=', 1)
@@ -38,7 +38,11 @@ class HomeController extends Controller
         #$explodeds = Team::with('members')->orderBy('time','desc')->where("exploded",1)->get();
         
         #$teams = array_merge($defuseds->toArray(),$explodeds->toArray());
-        $teams = Team::with('members')->where("event_name",env("APP_EVENT_NAME"))->get()->sortByDesc("score");
+        $teams = Team::with('members')
+        ->where("event_name", env("APP_EVENT_NAME"))
+        ->whereNotNull("time")
+        ->get()
+        ->sortByDesc("score");
         
         return view('rank', ["teams"=>$teams]);
     }
