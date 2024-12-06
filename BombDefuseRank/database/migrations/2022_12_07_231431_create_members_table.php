@@ -18,6 +18,8 @@ class CreateMembersTable extends Migration
             $table->string('name');
             $table->string('age')->nullable();
             $table->string('course')->nullable();
+            $table->integer('participate')->nullable();
+            $table->integer('participateCount')->nullable();
             $table->foreignId("team_id")->constrained();
             $table->timestamps();
         });
