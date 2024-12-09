@@ -6,10 +6,10 @@
 LiquidCrystal_I2C lcd(0x27,16,2);
 
 //Versao do codigo
-String codVer = "v1.0 EX24";
+String codVer = "v1.1 EX24";
 
 //TEMPO
-const int MIN_ = 20;
+const int MIN_ = 15;
 const int SEG_ = 0;
 
 //Penalidade fio ou codigo errado
