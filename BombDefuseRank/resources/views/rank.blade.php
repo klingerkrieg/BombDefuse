@@ -43,19 +43,25 @@ function verEquipe(id){
                     </tr>
                 </thead>
                 <tbody>
+                    @php 
+                    $position = 0;
+                    @endphp
                     @foreach ($teams as $k=>$team)
-                        <tr class="{{ $k + 1 <= 3 ? 'table-success' : ''}}">
-                            <th scope="row">{{$k+1}}</th>
+                        @php 
+                        $position++;
+                        @endphp
+                        <tr class="{{ $position <= 3 ? 'table-success' : ''}}">
+                            <th scope="row">{{$position}}</th>
                             <td>{{$team['time']}}</td>
                             <td>{{$team['team_name']}}
 
                                 @if ($team['exploded'] == 1)
                                     <img src="{{asset("img/explode.png")}}" style="height:22px;">
-                                @elseif ($k == 0)
+                                @elseif ($position == 1)
                                     <img src="{{asset("img/trofeu.png")}}" style="height:22px;">
-                                @elseif ($k == 1)
+                                @elseif ($position == 2)
                                     <img src="{{asset("img/trofeu2.png")}}" style="height:22px;">
-                                @elseif ($k == 2)
+                                @elseif ($position == 3)
                                     <img src="{{asset("img/trofeu3.png")}}" style="height:22px;">
                                 @else
                                     <img src="{{asset("img/alicate.png")}}" style="height:22px;">
